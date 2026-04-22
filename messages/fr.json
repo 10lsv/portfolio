@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "title": "Léo Sauvey — Développeur Freelance | Sites, Apps, Logiciels sur mesure",
+    "description": "Développeur freelance basé à Caen. Je conçois et livre des sites, applications et logiciels sur mesure. Disponible en remote."
+  },
+  "nav": {
+    "home": "Accueil",
+    "projects": "Projets",
+    "about": "À propos",
+    "contact": "Contact",
+    "menuOpen": "Ouvrir le menu",
+    "menuClose": "Fermer le menu"
+  },
+  "theme": {
+    "toggleLight": "Passer en mode clair",
+    "toggleDark": "Passer en mode sombre"
+  },
+  "locale": {
+    "switchToFr": "Passer en français",
+    "switchToEn": "Switch to English"
+  },
+  "hero": {
+    "eyebrow": "// PORTFOLIO 2026",
+    "title": "LÉO SAUVEY",
+    "tagline": "Développeur freelance. Je conçois et livre des sites, apps et outils sur mesure.",
+    "stat1": "01 / 3E ANNÉE SUPINFO",
+    "stat2": "02 / CAEN & CHERBOURG",
+    "stat3": "03 / REMOTE FRIENDLY",
+    "scroll": "Défiler"
+  },
+  "about": {
+    "number": "01",
+    "eyebrow": "// À propos",
+    "title": "À propos",
+    "p1": "J'ai 21 ans et je suis en troisième année d'école d'ingénieur à Supinfo. Basé entre Caen et Cherbourg, je travaille sur site ou à distance, selon ce qui colle le mieux au projet.",
+    "p2": "Je conçois et développe des sites web, des applications et des logiciels sur mesure. L'idée derrière chaque mission : livrer un outil qui fait vraiment gagner du temps, ou qui débloque une opportunité concrète pour l'équipe ou le client.",
+    "p3": "Pointilleux sur les détails, à l'écoute de ce qu'on ne dit pas toujours explicitement, investi dans un projet comme s'il était le mien. En dehors du code : sport, bonne table et échanges humains — je crois qu'on fait toujours mieux ce qu'on aime vraiment."
+  },
+  "stack": {
+    "number": "02",
+    "eyebrow": "// Stack",
+    "title": "Stack principale",
+    "subtitle": "Les technos que j'utilise au quotidien. Je touche à d'autres, mais celles-là je les maîtrise.",
+    "frontHeader": "FRONT",
+    "backHeader": "BACK & OUTILS"
+  },
+  "contact": {
+    "number": "04",
+    "eyebrow": "// CONTACT",
+    "title": "On travaille ensemble ?",
+    "subtitle": "Un projet, une idée, une question. L'email, c'est le plus simple.",
+    "email": "sauveyleo@gmail.com",
+    "mailtoSubject": "Projet — via leosauvey.fr",
+    "copy": "Copier l'email",
+    "copied": "Copié ✓",
+    "socialGithub": "GitHub",
+    "socialLinkedin": "LinkedIn"
+  },
+  "footer": {
+    "rights": "© 2026 Léo Sauvey — Tous droits réservés.",
+    "mention": "Conçu et développé avec soin."
+  },
+  "projectsStub": {
+    "label": "// stub section — projects (sprint 3)"
+  }
+}

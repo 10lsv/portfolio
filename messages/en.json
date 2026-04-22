@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "title": "Léo Sauvey — Freelance Developer | Websites, Apps, Custom Software",
+    "description": "Freelance developer based in Caen, France. I design and deliver tailored websites, apps and software. Remote-friendly."
+  },
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "about": "About",
+    "contact": "Contact",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
+  },
+  "theme": {
+    "toggleLight": "Switch to light mode",
+    "toggleDark": "Switch to dark mode"
+  },
+  "locale": {
+    "switchToFr": "Passer en français",
+    "switchToEn": "Switch to English"
+  },
+  "hero": {
+    "eyebrow": "// PORTFOLIO 2026",
+    "title": "LÉO SAUVEY",
+    "tagline": "Freelance developer. I design and deliver tailored websites, apps and software.",
+    "stat1": "01 / SUPINFO — YEAR 3",
+    "stat2": "02 / CAEN & CHERBOURG",
+    "stat3": "03 / REMOTE FRIENDLY",
+    "scroll": "Scroll"
+  },
+  "about": {
+    "number": "01",
+    "eyebrow": "// About",
+    "title": "About",
+    "p1": "I'm 21, currently in my third year at Supinfo engineering school. Based between Caen and Cherbourg in France, I work on-site or fully remote — whichever fits the project best.",
+    "p2": "I design and build websites, apps and custom software. The idea behind every engagement: ship a tool that actually saves time, or unlocks a real opportunity for the team or the client.",
+    "p3": "Detail-driven, a careful listener to what isn't said out loud, invested in every project as if it were my own. Off-keyboard: sport, good food, real conversations — I think we always do better work on the things we genuinely care about."
+  },
+  "stack": {
+    "number": "02",
+    "eyebrow": "// Stack",
+    "title": "Main stack",
+    "subtitle": "The tech I use day-to-day. I touch others, but these I really master.",
+    "frontHeader": "FRONT",
+    "backHeader": "BACK & TOOLS"
+  },
+  "contact": {
+    "number": "04",
+    "eyebrow": "// CONTACT",
+    "title": "Let's work together?",
+    "subtitle": "A project, an idea, a question. Email is the simplest way.",
+    "email": "sauveyleo@gmail.com",
+    "mailtoSubject": "Project — via leosauvey.fr",
+    "copy": "Copy email",
+    "copied": "Copied ✓",
+    "socialGithub": "GitHub",
+    "socialLinkedin": "LinkedIn"
+  },
+  "footer": {
+    "rights": "© 2026 Léo Sauvey — All rights reserved.",
+    "mention": "Designed and crafted with care."
+  },
+  "projectsStub": {
+    "label": "// stub section — projects (sprint 3)"
+  }
+}
