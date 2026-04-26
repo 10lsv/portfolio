@@ -4,6 +4,7 @@ import Lenis from '@studio-freight/lenis';
 import { useEffect, useRef } from 'react';
 
 import { ScrollTrigger, gsap } from '@/lib/animations';
+import { setLenisInstance } from '@/lib/scrollLock';
 
 type UseLenisOptions = {
   enabled: boolean;
@@ -28,6 +29,7 @@ export function useLenis({ enabled }: UseLenisOptions) {
       touchMultiplier: 1,
     });
     lenisRef.current = lenis;
+    setLenisInstance(lenis);
 
     const onScroll = () => ScrollTrigger.update();
     lenis.on('scroll', onScroll);
@@ -48,6 +50,7 @@ export function useLenis({ enabled }: UseLenisOptions) {
       lenis.off('scroll', onScroll);
       lenis.destroy();
       lenisRef.current = null;
+      setLenisInstance(null);
     };
   }, [enabled]);
 
