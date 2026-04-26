@@ -32,7 +32,7 @@
     "number": "01",
     "eyebrow": "// About",
     "title": "About",
-    "p1": "I'm 21, studying computer science at Supinfo (3rd year, RNCP degree expected in 2028). Based between Caen and Cherbourg, France, I work on-site or remote — whichever serves the project best.",
+    "p1": "I'm 21, studying computer science at Supinfo (3rd year, RNCP degree expected in 2028). Based between Caen and Cherbourg, France, I work on-site or remote depending on what serves the project best.",
     "p2": "I design and ship websites, mobile and web apps, and custom software. The goal is always the same: deliver a tool that solves a real problem, whether it saves time day-to-day or unlocks something concrete inside a company.",
     "p3": "Detail-obsessed, good at picking up what a client doesn't say out loud, and as invested in the project as if it were my own. Outside of code, I'm really into sports and love good food and good company — it helps keep a cool head when a sprint goes sideways."
   },
@@ -43,6 +43,58 @@
     "subtitle": "The tech I use day-to-day. I touch others, but these I really master.",
     "frontHeader": "FRONT",
     "backHeader": "BACK & TOOLS"
+  },
+  "projects": {
+    "number": "03",
+    "eyebrow": "// Projects",
+    "title": "Selected work",
+    "subtitle": "A representative sample. Happy to walk through any of these in more depth.",
+    "status": {
+      "live": "Live",
+      "wip": "In progress",
+      "offline": "Completed"
+    },
+    "cardOpen": "Open project",
+    "modal": {
+      "close": "Close",
+      "visit": "Visit project",
+      "source": "Source code",
+      "stackLabel": "Stack",
+      "yearLabel": "Year",
+      "roleLabel": "Role"
+    },
+    "items": {
+      "supify": {
+        "tagline": "Music-focused social network with integrated mini-games.",
+        "description": "Supify is a music-centric social network. Users share discoveries, engage around tracks, and play integrated real-time music mini-games. Main ongoing project.",
+        "role": "Solo maker"
+      },
+      "libreo": {
+        "tagline": "Literary discovery web app with an editorial, premium design.",
+        "description": "Libreo helps users explore and discover books through a polished, premium-magazine-inspired interface. Typography-driven navigation, editorial layout.",
+        "role": "Solo maker"
+      },
+      "lsv-prono": {
+        "tagline": "Web app to track your betting evolution and performance.",
+        "description": "LSV Prono logs your sports bets, visualizes your evolution over time, and analyzes performance through dedicated charts.",
+        "role": "Solo maker"
+      },
+      "photographer-site": {
+        "tagline": "Gallery website for a photographer.",
+        "description": "Showcase website with polished photo gallery and smooth navigation, designed to highlight a photographer's work.",
+        "role": "Freelance — design & dev"
+      },
+      "mkagain777": {
+        "tagline": "E-commerce site for a beatmaker selling productions to rappers.",
+        "description": "Platform enabling a beatmaker to sell instrumentals: catalog, licensing, payments, order management. Work in progress.",
+        "role": "Freelance — design & dev"
+      },
+      "nutriscan": {
+        "tagline": "Mobile app: photograph your meal, get full nutrition data to track your diet.",
+        "description": "Nutriscan uses image recognition to identify food from a photo and instantly provides nutrition data (calories, macros, micros). Built to simplify daily diet tracking.",
+        "role": "Solo maker"
+      }
+    }
   },
   "contact": {
     "number": "04",

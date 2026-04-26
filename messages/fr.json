@@ -34,7 +34,7 @@
     "title": "À propos",
     "p1": "J'ai 21 ans, je suis étudiant en informatique à Supinfo (3ème année, diplôme RNCP prévu en 2028). Je vis entre Caen et Cherbourg, et je bosse indifféremment en présentiel ou à distance selon ce qui sert le projet.",
     "p2": "Je conçois et je livre des sites, des applications web et mobile, et des logiciels sur mesure. L'objectif est toujours le même : produire un outil qui résout un vrai problème, qu'il s'agisse de gagner du temps au quotidien ou de débloquer quelque chose dans une entreprise.",
-    "p3": "Pointilleux sur les détails, à l'écoute de ce que le client ne dit pas toujours, et investi dans le projet comme s'il m'appartenait. En dehors du code, je suis très sportif et plutôt bon vivant ça aide à garder les idées claires et la tête froide quand un sprint déraille."
+    "p3": "Pointilleux sur les détails, à l'écoute de ce que le client ne dit pas toujours, et investi dans le projet comme s'il m'appartenait. En dehors du code, je suis très sportif et plutôt bon vivant, ça aide à garder les idées claires et la tête froide quand un sprint déraille."
   },
   "stack": {
     "number": "02",
@@ -43,6 +43,58 @@
     "subtitle": "Les technos que j'utilise au quotidien. Je touche à d'autres, mais celles-là je les maîtrise.",
     "frontHeader": "FRONT",
     "backHeader": "BACK & OUTILS"
+  },
+  "projects": {
+    "number": "03",
+    "eyebrow": "// Projets",
+    "title": "Sélection",
+    "subtitle": "Un échantillon représentatif. Je détaille sur demande.",
+    "status": {
+      "live": "En ligne",
+      "wip": "En cours",
+      "offline": "Terminé"
+    },
+    "cardOpen": "Ouvrir le projet",
+    "modal": {
+      "close": "Fermer",
+      "visit": "Voir le projet",
+      "source": "Code source",
+      "stackLabel": "Stack",
+      "yearLabel": "Année",
+      "roleLabel": "Rôle"
+    },
+    "items": {
+      "supify": {
+        "tagline": "Réseau social dédié à la musique, avec mini-jeux intégrés.",
+        "description": "Supify est un réseau social centré sur la musique. Les utilisateurs partagent leurs découvertes, interagissent autour de morceaux, et accèdent à des mini-jeux musicaux en temps réel. Projet phare actuellement en développement.",
+        "role": "Solo maker"
+      },
+      "libreo": {
+        "tagline": "Application web de découverte littéraire au design éditorial & luxe.",
+        "description": "Libreo aide à explorer et découvrir des livres via une interface soignée, inspirée des magazines littéraires haut de gamme. Navigation typographique, mise en scène éditoriale.",
+        "role": "Solo maker"
+      },
+      "lsv-prono": {
+        "tagline": "Application web de suivi d'évolution pour les paris sportifs.",
+        "description": "LSV Prono permet de journaliser ses paris sportifs, visualiser son évolution dans le temps et analyser ses performances avec des graphiques dédiés.",
+        "role": "Solo maker"
+      },
+      "photographer-site": {
+        "tagline": "Site galerie pour un photographe.",
+        "description": "Site vitrine avec galerie photo soignée et navigation fluide, conçu pour mettre en valeur le travail d'un photographe.",
+        "role": "Freelance — design & dev"
+      },
+      "mkagain777": {
+        "tagline": "Site e-commerce pour un beatmaker vendant ses productions aux rappeurs.",
+        "description": "Plateforme permettant à un beatmaker de vendre ses instrumentales : catalogue, licences, paiements, gestion de commande. Projet en cours de développement.",
+        "role": "Freelance — design & dev"
+      },
+      "nutriscan": {
+        "tagline": "Application mobile : photographie ton plat, obtiens toutes les infos nutritionnelles pour suivre ton régime.",
+        "description": "Nutriscan utilise la reconnaissance d'image pour identifier les aliments à partir d'une photo et fournir instantanément les informations nutritionnelles (calories, macros, micros). Pensé pour simplifier le suivi alimentaire au quotidien.",
+        "role": "Solo maker"
+      }
+    }
   },
   "contact": {
     "number": "04",

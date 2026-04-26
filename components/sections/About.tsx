@@ -46,38 +46,40 @@ export function About() {
       aria-labelledby="about-title"
     >
       <div className="mx-auto w-full max-w-(--container-max)">
-        <SectionNumber number={t('number')} className="mb-12 md:mb-16" />
+        <div className="flex flex-col gap-12 md:flex-row md:items-start md:gap-16">
+          <SectionNumber number={t('number')} className="md:shrink-0" />
 
-        <div className="grid gap-12 md:grid-cols-12 md:gap-16">
-          <div className="md:col-span-5">
-            <p
-              data-about-reveal
-              className="caption text-accent mb-4"
-            >
-              {t('eyebrow')}
-            </p>
-            <h2
-              id="about-title"
-              data-about-reveal
-              className={cn(
-                'font-display font-semibold leading-[1.15]',
-                'text-h1 md:text-display-m',
-              )}
-            >
-              {t('title')}
-            </h2>
-          </div>
+          <div className="flex-1 grid gap-12 md:grid-cols-12 md:gap-16">
+            <div className="md:col-span-5">
+              <p
+                data-about-reveal
+                className="caption text-accent mb-4"
+              >
+                {t('eyebrow')}
+              </p>
+              <h2
+                id="about-title"
+                data-about-reveal
+                className={cn(
+                  'font-display font-semibold leading-[1.15]',
+                  'text-h1 md:text-display-m',
+                )}
+              >
+                {t('title')}
+              </h2>
+            </div>
 
-          <div className="flex flex-col gap-6 md:col-span-7">
-            <p data-about-reveal className="text-body-l text-text-1">
-              {t('p1')}
-            </p>
-            <p data-about-reveal className="text-body-l text-text-1">
-              {t('p2')}
-            </p>
-            <p data-about-reveal className="text-body-l text-text-1">
-              {t('p3')}
-            </p>
+            <div className="flex flex-col gap-6 md:col-span-7">
+              <p data-about-reveal className="text-body-l text-text-1">
+                {t('p1')}
+              </p>
+              <p data-about-reveal className="text-body-l text-text-1">
+                {t('p2')}
+              </p>
+              <p data-about-reveal className="text-body-l text-text-1">
+                {t('p3')}
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -90,51 +90,55 @@ export function TechStack() {
       aria-labelledby="stack-title"
     >
       <div className="mx-auto w-full max-w-(--container-max)">
-        <SectionNumber number={t('number')} className="mb-12 md:mb-16" />
+        <div className="flex flex-col gap-12 md:flex-row md:items-start md:gap-16">
+          <SectionNumber number={t('number')} className="md:shrink-0" />
 
-        <div className="mb-12 flex max-w-3xl flex-col gap-4 md:mb-20">
-          <p data-stack-reveal className="caption text-accent">
-            {t('eyebrow')}
-          </p>
-          <h2
-            id="stack-title"
-            data-stack-reveal
-            className={cn(
-              'font-display font-semibold leading-[1.15]',
-              'text-h1 md:text-display-m',
-            )}
-          >
-            {t('title')}
-          </h2>
-          <p data-stack-reveal className="text-body-l text-text-1">
-            {t('subtitle')}
-          </p>
-        </div>
+          <div className="flex-1">
+            <div className="mb-12 flex max-w-3xl flex-col gap-4 md:mb-20">
+              <p data-stack-reveal className="caption text-accent">
+                {t('eyebrow')}
+              </p>
+              <h2
+                id="stack-title"
+                data-stack-reveal
+                className={cn(
+                  'font-display font-semibold leading-[1.15]',
+                  'text-h1 md:text-display-m',
+                )}
+              >
+                {t('title')}
+              </h2>
+              <p data-stack-reveal className="text-body-l text-text-1">
+                {t('subtitle')}
+              </p>
+            </div>
 
-        <div
-          data-stack-grid
-          className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16"
-        >
-          <div>
-            <h3 className="caption text-accent mb-6 md:mb-8">
-              {t('frontHeader')}
-            </h3>
-            <ul className="flex flex-col gap-3 md:gap-4">
-              {FRONT_ITEMS.map((item) => (
-                <StackItem key={item} label={item} />
-              ))}
-            </ul>
-          </div>
+            <div
+              data-stack-grid
+              className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16"
+            >
+              <div>
+                <h3 className="caption text-accent mb-6 md:mb-8">
+                  {t('frontHeader')}
+                </h3>
+                <ul className="flex flex-col gap-3 md:gap-4">
+                  {FRONT_ITEMS.map((item) => (
+                    <StackItem key={item} label={item} />
+                  ))}
+                </ul>
+              </div>
 
-          <div>
-            <h3 className="caption text-accent mb-6 md:mb-8">
-              {t('backHeader')}
-            </h3>
-            <ul className="flex flex-col gap-3 md:gap-4">
-              {BACK_ITEMS.map((item) => (
-                <StackItem key={item} label={item} />
-              ))}
-            </ul>
+              <div>
+                <h3 className="caption text-accent mb-6 md:mb-8">
+                  {t('backHeader')}
+                </h3>
+                <ul className="flex flex-col gap-3 md:gap-4">
+                  {BACK_ITEMS.map((item) => (
+                    <StackItem key={item} label={item} />
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
