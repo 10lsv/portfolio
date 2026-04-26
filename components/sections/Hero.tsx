@@ -5,7 +5,9 @@ import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
+import { HeroBackdrop } from '@/components/sections/HeroBackdrop';
 import { cn } from '@/lib/cn';
+import { useIntro } from '@/lib/IntroContext';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
 const HIDDEN_SELECTORS = [
@@ -27,15 +29,17 @@ const log = (...args: unknown[]) => {
 export function Hero() {
   const t = useTranslations('hero');
   const reducedMotion = useReducedMotion();
+  const { introDone } = useIntro();
   const rootRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
-  // Entrée Hero (brief §6.4).
-  // Stratégie : `fromTo` pour les mots — GSAP gère l'état initial ET final,
-  // aucun parsing de CSS transform requis. Les autres éléments restent en
-  // gsap.set + tl.to car leur animation fonctionne déjà.
+  // Entrée Hero (brief §6.4). Deux gates :
+  //  - reducedMotion : snap direct sur l'état final, pas de timeline.
+  //  - introDone : on applique l'état initial (invisible) dès le mount pour
+  //    éviter un FOUC, mais on ne lance le timeline qu'une fois le loader parti.
+  //    Sinon l'anim se jouerait sous le fond bg-0 du Loader et serait perdue.
   useEffect(() => {
-    log('effect run, reducedMotion=', reducedMotion);
+    log('effect run, reducedMotion=', reducedMotion, 'introDone=', introDone);
     const ctx = gsap.context(() => {
       const words = gsap.utils.toArray<HTMLElement>('[data-hero-word]');
       const hides = gsap.utils.toArray<HTMLElement>(HIDDEN_SELECTORS.join(', '));
@@ -48,7 +52,16 @@ export function Hero() {
         return;
       }
 
+      // État initial appliqué tout de suite (avant introDone). Les mots sont
+      // forcés yPercent 100 pour que pendant le Loader + avant la timeline,
+      // ils ne soient pas visibles statiquement en yPercent 0.
       gsap.set(hides, { opacity: 0, y: 16 });
+      gsap.set(words, { yPercent: 100 });
+
+      if (!introDone) {
+        log('intro not done yet → state set, timeline delayed');
+        return;
+      }
 
       const tl = gsap.timeline({
         defaults: { ease: 'expo.out' },
@@ -58,9 +71,8 @@ export function Hero() {
 
       tl.to('[data-hero-eyebrow]', { opacity: 1, y: 0, duration: 0.8 }, 0);
 
-      tl.fromTo(
+      tl.to(
         '[data-hero-word]',
-        { yPercent: 100 },
         {
           yPercent: 0,
           duration: 1,
@@ -83,7 +95,7 @@ export function Hero() {
       log('cleanup → ctx.revert()');
       ctx.revert();
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, introDone]);
 
   // Scroll indicator disparaît au premier scroll (brief §6.4).
   useEffect(() => {
@@ -103,6 +115,7 @@ export function Hero() {
       className="relative flex min-h-[100dvh] items-center px-6 pt-24 md:px-16 md:pt-32"
       aria-labelledby="hero-title"
     >
+      <HeroBackdrop />
       <div className="mx-auto w-full max-w-(--container-max)">
         <p
           data-hero-eyebrow

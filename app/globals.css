@@ -243,3 +243,72 @@
     transform: translateY(16px);
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Hero backdrop CSS (brief §6.4) — "Vercel pas Lusion".
+ *  - .hero-backdrop-radial : radial rouge bas-droit, opacity max 0.15
+ *  - .hero-backdrop-noise  : noise statique public/noise.svg en overlay
+ *  - @keyframes hero-pulse : pulse opacité très lent (24s), ne joue que si
+ *    l'utilisateur accepte le mouvement (gate dans HeroBackdrop.tsx)
+ * --------------------------------------------------------------------------- */
+.hero-backdrop-radial {
+  background: radial-gradient(
+    circle at 100% 100%,
+    var(--accent-glow) 0%,
+    rgba(139, 0, 0, 0.08) 30%,
+    transparent 60%
+  );
+}
+
+.hero-backdrop-noise {
+  background-image: url('/noise.svg');
+  background-repeat: repeat;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+}
+
+@keyframes hero-pulse {
+  0% { opacity: 0.55; }
+  50% { opacity: 1; }
+  100% { opacity: 0.55; }
+}
+
+.animate-hero-pulse {
+  animation: hero-pulse 24s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------------------
+ * Page 404 (brief §6.10)
+ *  - .notfound-title : gradient text-0 → accent sur le "404" géant
+ *  - @keyframes glitch-404 : micro distorsion toutes les 4s, 200ms effective
+ *  - Gate reduced-motion : aucune anim, titre statique
+ * --------------------------------------------------------------------------- */
+.notfound-title {
+  background-image: linear-gradient(180deg, var(--text-0) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+@keyframes glitch-404 {
+  0%, 94%, 100% { transform: translate(0, 0) skewX(0deg); }
+  95% { transform: translate(2px, -1px) skewX(2deg); }
+  96% { transform: translate(-2px, 1px) skewX(-1.5deg); }
+  97% { transform: translate(1px, -2px) skewX(1deg); }
+  98% { transform: translate(-1px, 1px) skewX(-1deg); }
+}
+
+.animate-glitch-404 {
+  animation: glitch-404 4s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-pulse,
+  .animate-glitch-404 {
+    animation: none !important;
+  }
+  .hero-backdrop-noise {
+    display: none;
+  }
+}

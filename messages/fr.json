@@ -112,7 +112,12 @@
     "rights": "© 2026 Léo Sauvey — Tous droits réservés.",
     "mention": "Conçu et développé avec soin."
   },
-  "projectsStub": {
-    "label": "// stub section — projects (sprint 3)"
+  "loader": {
+    "name": "LÉO SAUVEY",
+    "skipLabel": "Passer l'introduction"
+  },
+  "notFound": {
+    "tagline": "Cette page s'est perdue dans le code. Retour au début ?",
+    "cta": "Retour à l'accueil"
   }
 }

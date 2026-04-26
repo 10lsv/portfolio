@@ -7,9 +7,11 @@ import { BurgerMenu } from './BurgerMenu';
 import { LocaleToggle } from './LocaleToggle';
 import { ThemeToggle } from './ThemeToggle';
 import { cn } from '@/lib/cn';
+import { useIntro } from '@/lib/IntroContext';
 
 export function Header() {
   const t = useTranslations('nav');
+  const { introDone } = useIntro();
   const [scrolled, setScrolled] = useState(false);
   const [compact, setCompact] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -45,9 +47,17 @@ export function Header() {
           className={cn(
             'font-display text-accent font-semibold uppercase tracking-wider',
             'text-[20px] leading-none',
-            'transition-colors duration-(--duration-normal) hover:text-accent-hi',
+            'transition-[color,opacity] duration-(--duration-normal) hover:text-accent-hi',
+            // Logo fade-in simultané à l'exit du loader (brief §6.1 "devient
+            // le logo du header"). Crossfade avec la sortie de "LÉO SAUVEY"
+            // qui translate vers le coin top-left côté Loader.
+            introDone ? 'opacity-100' : 'opacity-0',
           )}
-          aria-label="Léo Sauvey — retour à l'accueil"
+          // accessible name doit inclure le texte visible (Lighthouse
+          // label-content-name-mismatch). On commence par "LSV" pour respecter
+          // la règle WCAG 2.5.3 (label-in-name) tout en clarifiant la cible
+          // pour les screen readers.
+          aria-label="LSV — Léo Sauvey, retour à l'accueil"
         >
           LSV
         </a>

@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
+import { MagneticLink } from '@/components/ui/MagneticLink';
 import { cn } from '@/lib/cn';
 
 const NAV_ITEMS = [
@@ -45,8 +46,12 @@ export function BurgerMenu({ open, onClose }: BurgerMenuProps) {
       id="burger-menu"
       role="dialog"
       aria-modal="true"
-      aria-hidden={!open}
       aria-label="Main menu"
+      // `inert` quand fermé : retire le sous-arbre de la séquence de tab et
+      // de l'arbre d'accessibilité (remplace `aria-hidden`, qui posait pb
+      // Lighthouse — descendants focusables avec aria-hidden=true). Supporté
+      // depuis 2023 sur tous les navigateurs cibles.
+      inert={!open || undefined}
       // Clip-path circle qui s'étend depuis le coin top-right (brief §6.3).
       // 600ms ease-expo-out. Inactif au repos (pointer-events none) pour ne
       // pas intercepter les clics.
@@ -65,27 +70,29 @@ export function BurgerMenu({ open, onClose }: BurgerMenuProps) {
         <ul className="flex flex-col gap-6">
           {NAV_ITEMS.map((item) => (
             <li key={item.key}>
-              <a
-                href={item.href}
-                onClick={onClose}
-                className={cn(
-                  'group relative inline-flex items-center font-display font-semibold',
-                  'text-[48px] leading-none md:text-[80px]',
-                  'text-text-0 transition-[transform,color] duration-(--duration-fast) ease-(--ease-out-smooth)',
-                  'hover:translate-x-6 hover:text-text-0',
-                )}
-              >
-                {/* Barre rouge à gauche au hover (brief §6.3) */}
-                <span
-                  aria-hidden
+              <MagneticLink strength={0.18} radius={24}>
+                <a
+                  href={item.href}
+                  onClick={onClose}
                   className={cn(
-                    'absolute -left-6 top-1/2 h-[2px] w-4 -translate-y-1/2 bg-accent',
-                    'origin-left scale-x-0 transition-transform duration-(--duration-fast) ease-(--ease-out-smooth)',
-                    'group-hover:scale-x-100',
+                    'group relative inline-flex items-center font-display font-semibold',
+                    'text-[48px] leading-none md:text-[80px]',
+                    'text-text-0 transition-[transform,color] duration-(--duration-fast) ease-(--ease-out-smooth)',
+                    'hover:translate-x-6 hover:text-text-0',
                   )}
-                />
-                {t(item.key)}
-              </a>
+                >
+                  {/* Barre rouge à gauche au hover (brief §6.3) */}
+                  <span
+                    aria-hidden
+                    className={cn(
+                      'absolute -left-6 top-1/2 h-[2px] w-4 -translate-y-1/2 bg-accent',
+                      'origin-left scale-x-0 transition-transform duration-(--duration-fast) ease-(--ease-out-smooth)',
+                      'group-hover:scale-x-100',
+                    )}
+                  />
+                  {t(item.key)}
+                </a>
+              </MagneticLink>
             </li>
           ))}
         </ul>

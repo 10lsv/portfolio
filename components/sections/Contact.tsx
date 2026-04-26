@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useRef } from 'react';
 
 import { CopyEmailButton } from '@/components/ui/CopyEmailButton';
+import { MagneticLink } from '@/components/ui/MagneticLink';
 import { SectionNumber } from '@/components/ui/SectionNumber';
 import { REVEAL_SCROLL_TRIGGER, gsap } from '@/lib/animations';
 import { cn } from '@/lib/cn';
@@ -75,27 +76,30 @@ export function Contact() {
             {t('subtitle')}
           </p>
 
-          <a
-            data-contact-reveal
-            href={mailto}
-            className={cn(
-              'group relative inline-block font-display font-semibold',
-              'text-h3 md:text-h1', // 24px mobile / 40px desktop (brief §6.8)
-              'text-text-0 transition-colors duration-(--duration-normal) ease-(--ease-in-out)',
-              'hover:text-accent',
-            )}
-          >
-            <span>{email}</span>
-            {/* Underline rouge qui se trace au hover */}
-            <span
-              aria-hidden
+          <MagneticLink strength={0.22}>
+            <a
+              data-contact-reveal
+              href={mailto}
               className={cn(
-                'absolute -bottom-1 left-0 h-[2px] w-0 bg-accent',
-                'transition-[width] duration-300 ease-(--ease-out-smooth)',
-                'group-hover:w-full',
+                'group relative inline-block font-display font-semibold',
+                'text-h3 md:text-h1', // 24px mobile / 40px desktop (brief §6.8)
+                'text-text-0 transition-colors duration-(--duration-normal) ease-(--ease-in-out)',
+                'hover:text-accent',
               )}
-            />
-          </a>
+            >
+              <span>{email}</span>
+              {/* Underline rouge qui se trace au hover (300ms — cohérent avec
+                  Stack items + Contact, timing unifié polish §5). */}
+              <span
+                aria-hidden
+                className={cn(
+                  'absolute -bottom-1 left-0 h-[2px] w-0 bg-accent',
+                  'transition-[width] duration-300 ease-(--ease-out-smooth)',
+                  'group-hover:w-full',
+                )}
+              />
+            </a>
+          </MagneticLink>
 
           <div data-contact-reveal>
             <CopyEmailButton
