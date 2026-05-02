@@ -3,29 +3,27 @@
 import { motion } from 'framer-motion';
 
 import { ProjectCover } from '@/components/ui/ProjectCover';
-import { StatusBadge } from '@/components/ui/StatusBadge';
 import type { Project } from '@/content/projects';
 import { cn } from '@/lib/cn';
 
 type ProjectCardProps = {
   project: Project;
-  statusLabel: string;
   tagline: string;
   openLabel: string;
   onOpen: () => void;
 };
 
-// Card projet. Les wrappers cover/title/meta/badge sont tagués `layoutId`
-// pour que Framer Motion anime la morphose card → modal (brief §6.7,
-// pattern par défaut). Le même layoutId doit se retrouver côté modal.
+// Card projet (2D fallback de la galerie 3D). V7 sprint chirurgical :
+// StatusBadge retiré (badge "EN COURS"/"TERMINÉ"/"LIVE" supprimé partout).
+// Les wrappers cover/title/year/tagline restent tagués `layoutId` pour la
+// morphose Framer Motion card → modal (brief §6.7).
 export function ProjectCard({
   project,
-  statusLabel,
   tagline,
   openLabel,
   onOpen,
 }: ProjectCardProps) {
-  const { id, title, year, coverSrc, status, featured } = project;
+  const { id, title, year, coverSrc, featured } = project;
 
   return (
     <motion.button
@@ -41,19 +39,15 @@ export function ProjectCard({
       <motion.div
         layoutId={`project-cover-${id}`}
         className={cn(
-          'relative aspect-[4/3] w-full overflow-hidden rounded-md',
+          // V8.2 : rounded-[16px] aligné visuellement avec le canvas-clip
+          // 64px sur le PNG 1600 (4% du width des deux côtés, cohérent).
+          'relative aspect-[8/5] w-full overflow-hidden rounded-[16px]',
           'border border-border',
           'transition-[border-color,transform] duration-(--duration-normal) ease-(--ease-out-smooth)',
           'group-hover:border-border-hi',
         )}
       >
         <ProjectCover title={title} src={coverSrc} priority={featured} />
-        <motion.div
-          layoutId={`project-badge-${id}`}
-          className="absolute left-4 top-4"
-        >
-          <StatusBadge status={status} label={statusLabel} />
-        </motion.div>
       </motion.div>
 
       <div className="flex items-baseline justify-between gap-4">
@@ -61,7 +55,7 @@ export function ProjectCard({
           layoutId={`project-title-${id}`}
           className={cn(
             'font-display text-h3 md:text-h2 font-semibold leading-tight',
-            'text-text-0 transition-colors duration-(--duration-fast) ease-(--ease-in-out)',
+            'text-text-1 transition-colors duration-(--duration-fast) ease-(--ease-in-out)',
             'group-hover:text-accent',
           )}
         >

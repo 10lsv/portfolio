@@ -30,9 +30,11 @@ async function loadJetBrainsMono(): Promise<ArrayBuffer> {
 
 type Locale = 'fr' | 'en';
 
-// Tagline courte figée par locale — pas d'appel i18n côté Edge (cohérent
-// avec /api/project-cover, brief §6.10 OG). Ces strings doivent rester
-// alignées avec messages/{fr,en}.json `hero.tagline` (version courte ici).
+// Strings figées par locale pour l'OG card — pas d'appel i18n côté Edge
+// (cohérent avec /api/project-cover, brief §6.10 OG). Découplé du hero
+// actuel du site (qui n'affiche plus eyebrow ni tagline depuis le sprint
+// hero refonte luxe épuré) : l'OG card garde un format social-friendly
+// avec eyebrow + tagline pour le rendu Twitter/Facebook/LinkedIn.
 const TAGLINE: Record<Locale, string> = {
   fr: 'Développeur freelance',
   en: 'Freelance developer',

@@ -15,28 +15,62 @@
 }
 
 /* ---------------------------------------------------------------------------
- * Design tokens — palette, typo, anim, radius (Sprint 1)
- * Dark = défaut (:root). Light = override via class .light (next-themes).
+ * Anton — utility class scopée au H1 du hero (sprint hero refonte v2,
+ * direction "éditorial magazine de mode"). La var --font-anton est
+ * injectée par next/font/google sur le body (cf. app/[locale]/layout.tsx).
+ * Fallback Impact (web-safe condensed bold) si la font ne charge pas.
+ * --------------------------------------------------------------------------- */
+.font-anton {
+  font-family: var(--font-anton, 'Impact', 'Helvetica Neue Condensed', sans-serif);
+}
+
+/* ---------------------------------------------------------------------------
+ * Archivo Black — utility class scopée au H1 hero V3 (sprint statement +
+ * flash néon, basé sur la bannière LinkedIn de Léo : LSV outline rouge
+ * bordeaux sur noir). La var --font-archivo-black est injectée par
+ * next/font/google (cf. app/[locale]/layout.tsx). Fallback Impact si la
+ * font ne charge pas.
+ * --------------------------------------------------------------------------- */
+.font-archivo-black {
+  font-family: var(--font-archivo-black, 'Impact', 'Helvetica Neue', sans-serif);
+}
+
+/* ---------------------------------------------------------------------------
+ * Design tokens — palette, typo, anim, radius
+ * V6 sprint chirurgical : light-only, plus de switch dark/light. Tous les
+ * tokens sont posés directement dans :root (couleur claire par défaut).
  * --------------------------------------------------------------------------- */
 :root {
-  color-scheme: dark;
+  /* V6 Light-only — refonte sprint chirurgical : suppression du dark mode,
+   * thème blanc unique. ThemeToggle + next-themes désinstallés (cf. layout
+   * et package.json). La classe `.light` qui existait pour next-themes
+   * est retirée — toutes les variables sont posées directement dans :root. */
+  color-scheme: light;
 
-  /* Palette dark */
-  --bg-0: #0a0a0a;
-  --bg-1: #141414;
-  --bg-2: #1f1f1f;
-  --border: #262626;
-  --border-hi: #3a3a3a;
-  --text-0: #f5f5f5;
-  --text-1: #a3a3a3;
+  /* Palette light Apple Minimal :
+   *   - bg-0 blanc pur (#FFFFFF) pour les pages
+   *   - overlays noirs translucides pour les surfaces glassmorphism
+   *     (cards Contact, etc.)
+   *   - text-1 noir pur, text-2/text-3 gris dégradés pour la hiérarchie
+   *   - accent #8B0000 (rouge bordeaux signature) conservé, lisible sur
+   *     blanc pour le H1 hero outline + accents critiques uniquement */
+  --bg-0: #ffffff;
+  --bg-1: rgba(0, 0, 0, 0.04);
+  --bg-2: rgba(0, 0, 0, 0.08);
+  --border: rgba(0, 0, 0, 0.08);
+  --border-hi: rgba(0, 0, 0, 0.12);
+  --border-strong: rgba(0, 0, 0, 0.15);
+  --text-0: #000000;
+  --text-1: #000000;
   --text-2: #6b6b6b;
+  --text-3: #a0a0a0;
   --accent: #8b0000;
-  --accent-hi: #b30000;
-  --accent-glow: rgba(139, 0, 0, 0.35);
+  --accent-hi: #b91c1c;
+  --accent-glow: rgba(139, 0, 0, 0.15);
 
-  /* Statut OK (badge LIVE projet). Vert sobre, saturation calée sur --accent
-   * pour matcher la sobriété de la palette — pas de fluo. */
-  --success: #3f9960;
+  /* Statut OK (badge LIVE projet). Vert plus foncé pour passer AA sur
+   * fond blanc. */
+  --success: #1f7a43;
 
   /* Typo stacks — les variables next/font seront injectées au layout */
   --font-display: 'Clash Display', var(--font-inter, 'Inter'), system-ui, sans-serif;
@@ -55,25 +89,6 @@
   --dur-xl: 1200ms;
 }
 
-.light {
-  color-scheme: light;
-
-  --bg-0: #fafafa;
-  --bg-1: #ffffff;
-  --bg-2: #f5f5f5;
-  --border: #e5e5e5;
-  --border-hi: #cccccc;
-  --text-0: #0a0a0a;
-  --text-1: #525252;
-  --text-2: #8a8a8a;
-  --accent: #8b0000;
-  --accent-hi: #6b0000;
-  --accent-glow: rgba(139, 0, 0, 0.15);
-
-  /* Contraste plus marqué sur fond clair pour passer AA sur bg-1 (#ffffff). */
-  --success: #1f7a43;
-}
-
 /* ---------------------------------------------------------------------------
  * Mapping @theme inline — expose les tokens CSS comme utilitaires Tailwind.
  * `inline` garde la référence à var(), donc le switch dark/light bascule
@@ -89,9 +104,11 @@
   --color-text-0: var(--text-0);
   --color-text-1: var(--text-1);
   --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
   --color-accent: var(--accent);
   --color-accent-hi: var(--accent-hi);
   --color-accent-glow: var(--accent-glow);
+  --color-border-strong: var(--border-strong);
   --color-success: var(--success);
 
   /* Familles de polices */
@@ -145,9 +162,11 @@
   --text-mono--line-height: 1.4;
   --text-mono--font-weight: 400;
 
-  /* Border radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
+  /* Border radius V5 "Minimal Apple" : douces, généreuses (12-24px).
+   * Inverse exact de la DA tech (4px partout). Cards = 16px, inputs/
+   * buttons = 12px, big surfaces (modals, hero cards) = 24px. */
+  --radius-sm: 8px;
+  --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
@@ -193,8 +212,10 @@
   }
 
   ::selection {
+    /* V6 light : text-0 est noir → contraste pauvre sur l'accent rouge.
+     * Force blanc pur pour la sélection au-dessus du highlight rouge. */
     background-color: var(--accent);
-    color: var(--text-0);
+    color: #ffffff;
   }
 
   /* Focus visible custom (a11y non-négo, section 10.2) */
@@ -229,53 +250,9 @@
   text-transform: uppercase;
 }
 
-/* ---------------------------------------------------------------------------
- * État initial Hero anti-FOUC : les éléments "hide" partent invisibles
- * avant que GSAP prenne le relais (brief §6.4). Les `data-hero-word` sont
- * gérés *uniquement* par GSAP via `fromTo` pour éviter tout conflit de
- * parsing entre la CSS transform et le runtime GSAP.
- * Syntaxe positive `no-preference` pour éviter les ambiguïtés parser du
- * `not all and (...)`.
- * --------------------------------------------------------------------------- */
-@media (prefers-reduced-motion: no-preference) {
-  [data-hero-hide] {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-}
-
-/* ---------------------------------------------------------------------------
- * Hero backdrop CSS (brief §6.4) — "Vercel pas Lusion".
- *  - .hero-backdrop-radial : radial rouge bas-droit, opacity max 0.15
- *  - .hero-backdrop-noise  : noise statique public/noise.svg en overlay
- *  - @keyframes hero-pulse : pulse opacité très lent (24s), ne joue que si
- *    l'utilisateur accepte le mouvement (gate dans HeroBackdrop.tsx)
- * --------------------------------------------------------------------------- */
-.hero-backdrop-radial {
-  background: radial-gradient(
-    circle at 100% 100%,
-    var(--accent-glow) 0%,
-    rgba(139, 0, 0, 0.08) 30%,
-    transparent 60%
-  );
-}
-
-.hero-backdrop-noise {
-  background-image: url('/noise.svg');
-  background-repeat: repeat;
-  opacity: 0.06;
-  mix-blend-mode: overlay;
-}
-
-@keyframes hero-pulse {
-  0% { opacity: 0.55; }
-  50% { opacity: 1; }
-  100% { opacity: 0.55; }
-}
-
-.animate-hero-pulse {
-  animation: hero-pulse 24s ease-in-out infinite;
-}
+/* V6 sprint chirurgical : HeroBackdrop ET HeroParticles supprimés. Le
+ * fond du hero est le blanc pur du body (--bg-0: #FFFFFF). Plus aucune
+ * micro-animation atmosphérique sur le hero — vibe "page statique pure". */
 
 /* ---------------------------------------------------------------------------
  * Page 404 (brief §6.10)
@@ -304,11 +281,106 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-hero-pulse,
-  .animate-glitch-404 {
+  /* V5 Apple : liste réduite — HeroBackdrop supprimé, ne reste que le
+   * breathe du H1 hero + le glitch 404. */
+  .animate-glitch-404,
+  .animate-hero-letter-breathe {
     animation: none !important;
   }
-  .hero-backdrop-noise {
-    display: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * Micro-anims permanentes (sprint "vivant pas figé")
+ *  - hero-letter-breathe    : H1 LÉO SAUVEY oscille letter-spacing 4s
+ *  - section-pulse-opacity  : numéro 01/02 oscille opacity 3.5s
+ *  - section-pulse-line     : ligne verticale rouge scaleY 1.03 sync
+ *  Tous gated par le @media reduced-motion ci-dessus.
+ * --------------------------------------------------------------------------- */
+/* Hero V5 Apple-subtle : amplitude breathe réduite (-0.02em ↔ +0.005em
+ * au lieu de 0 → 0.04em). Plus discret, vibe Apple "rien ne hurle".
+ * text-shadow glow rouge retiré (incompatible avec Apple sobriety —
+ * une pulsation rouge derrière le H1 attire trop l'œil). Cycle ralenti
+ * 2s → 4s pour respiration plus calme. */
+@keyframes hero-letter-breathe {
+  0%, 100% {
+    letter-spacing: -0.02em;
+    opacity: 1;
   }
+  50% {
+    letter-spacing: 0.005em;
+    opacity: 0.96;
+  }
+}
+.animate-hero-letter-breathe {
+  animation: hero-letter-breathe 4s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------------------
+ * Hero V3 — H1 outline rouge bordeaux (flash néon retiré, sprint chirurgical).
+ *
+ * .hero-title-outline : H1 LÉO SAUVEY rendu en lettres creuses (color
+ *   transparent + -webkit-text-stroke). Stroke 2px --accent (#8b0000) sur
+ *   desktop, fallback 1.5px sur mobile pour préserver la lisibilité quand
+ *   le H1 descend à 64px. Le H1 reste sémantiquement un <h1> avec le texte
+ *   "LÉO SAUVEY" pour SEO / screen readers.
+ *
+ * Animation conservée : breathe seul (.animate-hero-letter-breathe ci-dessus).
+ * --------------------------------------------------------------------------- */
+.hero-title-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--accent);
+  /* Fallback Firefox / engines sans préfixe webkit (rendu identique). */
+  text-stroke: 2px var(--accent);
+}
+@media (max-width: 767px) {
+  .hero-title-outline {
+    -webkit-text-stroke-width: 1.5px;
+    text-stroke-width: 1.5px;
+  }
+}
+
+/* V5 Apple : SectionNumber utilisé seulement par Projects.tsx (verrouillé
+ * intact). Le composant rend une "01" Clash Display + ligne rouge sans
+ * pulse animation — c'est l'état HEAD restauré. Les classes
+ * .animate-section-pulse-* sont conservées vides ici pour ne pas casser
+ * d'éventuelles refs CSS (no-op, pas d'animation). */
+.animate-section-pulse-opacity { /* intentionnellement vide V5 */ }
+.animate-section-pulse-line { /* intentionnellement vide V5 */ }
+
+/* ---------------------------------------------------------------------------
+ * Ripple rouge sur boutons primaires (Anim 4). Pseudo-élément ::before
+ * radial-gradient qui scale 0 → 1 + opacity 0 → 1 au hover, sur 600ms.
+ * `.btn-ripple` = wrapper qui pose position:relative + overflow:hidden.
+ * Le bouton hôte n'a rien d'autre à faire que d'avoir cette classe.
+ * Gated reduced-motion (transitions désactivées globalement par le @media
+ * `transition-duration: 0.01ms !important` du base layer ci-dessus).
+ * --------------------------------------------------------------------------- */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-ripple::before {
+  content: '';
+  position: absolute;
+  /* Sprint boost : -inset-50% pour un diamètre plus large (le ripple
+   * dépasse les bords du bouton avant d'être clipped par overflow:hidden). */
+  inset: -50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(139, 0, 0, 0.5) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: scale(0);
+  transition:
+    transform 600ms ease-out,
+    opacity 600ms ease-out;
+  pointer-events: none;
+  z-index: -1;
+}
+.btn-ripple:hover::before,
+.btn-ripple:focus-visible::before {
+  opacity: 1;
+  transform: scale(1);
 }

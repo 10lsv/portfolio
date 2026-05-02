@@ -1,12 +1,13 @@
 import { setRequestLocale } from 'next-intl/server';
 
-import { About } from '@/components/sections/About';
 import { Contact } from '@/components/sections/Contact';
 import { Footer } from '@/components/sections/Footer';
 import { Hero } from '@/components/sections/Hero';
 import { Projects } from '@/components/sections/Projects';
-import { TechStack } from '@/components/sections/TechStack';
 
+// V6 sprint chirurgical : section About retirée — composant supprimé,
+// item burger retiré, i18n nettoyée. Le portfolio est désormais Hero
+// → Projects → Contact → Footer.
 export default async function HomePage({
   params,
 }: {
@@ -18,8 +19,6 @@ export default async function HomePage({
   return (
     <>
       <Hero />
-      <About />
-      <TechStack />
       <Projects />
       <Contact />
       <Footer />

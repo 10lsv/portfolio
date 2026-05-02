@@ -29,7 +29,9 @@ function useIsTouchDevice(): boolean {
 
 type MagneticLinkProps = {
   children: ReactNode;
-  /** Intensité du magnétisme (fraction du delta cursor→center). Défaut 0.25. */
+  /** Intensité du magnétisme (fraction du delta cursor→center). Défaut 0.15.
+   * V5 Minimal Apple : 0.25 → 0.15 — Apple = mouvements très subtils,
+   * effet "ressenti" plus que "vu". */
   strength?: number;
   /** Zone de détection au-delà de la bounding box (px). Défaut 0 = bbox stricte. */
   radius?: number;
@@ -46,7 +48,7 @@ type MagneticLinkProps = {
 // pour la cible, préserve l'accessibilité et les autres effets CSS (underline hover).
 export function MagneticLink({
   children,
-  strength = 0.25,
+  strength = 0.15,
   radius = 0,
   className,
 }: MagneticLinkProps) {

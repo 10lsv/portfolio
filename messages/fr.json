@@ -6,55 +6,31 @@
   "nav": {
     "home": "Accueil",
     "projects": "Projets",
-    "about": "À propos",
     "contact": "Contact",
     "menuOpen": "Ouvrir le menu",
     "menuClose": "Fermer le menu"
   },
-  "theme": {
-    "toggleLight": "Passer en mode clair",
-    "toggleDark": "Passer en mode sombre"
+  "burger": {
+    "label": "Menu principal",
+    "github": "GitHub",
+    "linkedin": "LinkedIn"
   },
   "locale": {
     "switchToFr": "Passer en français",
     "switchToEn": "Switch to English"
   },
   "hero": {
-    "eyebrow": "// PORTFOLIO 2026",
     "title": "LÉO SAUVEY",
-    "tagline": "Développeur freelance. Je conçois et livre des sites, apps et outils sur mesure.",
-    "stat1": "01 / 3E ANNÉE SUPINFO",
-    "stat2": "02 / CAEN & CHERBOURG",
-    "stat3": "03 / REMOTE FRIENDLY",
+    "statement": "Développeur freelance. Solutions sur mesure, livraison rapide.",
     "scroll": "Défiler"
   },
-  "about": {
-    "number": "01",
-    "eyebrow": "// À propos",
-    "title": "À propos",
-    "p1": "J'ai 21 ans, je suis étudiant en informatique à Supinfo (3ème année, diplôme RNCP prévu en 2028). Je vis entre Caen et Cherbourg, et je bosse indifféremment en présentiel ou à distance selon ce qui sert le projet.",
-    "p2": "Je conçois et je livre des sites, des applications web et mobile, et des logiciels sur mesure. L'objectif est toujours le même : produire un outil qui résout un vrai problème, qu'il s'agisse de gagner du temps au quotidien ou de débloquer quelque chose dans une entreprise.",
-    "p3": "Pointilleux sur les détails, à l'écoute de ce que le client ne dit pas toujours, et investi dans le projet comme s'il m'appartenait. En dehors du code, je suis très sportif et plutôt bon vivant, ça aide à garder les idées claires et la tête froide quand un sprint déraille."
-  },
-  "stack": {
-    "number": "02",
-    "eyebrow": "// Stack",
-    "title": "Stack principale",
-    "subtitle": "Les technos que j'utilise au quotidien. Je touche à d'autres, mais celles-là je les maîtrise.",
-    "frontHeader": "FRONT",
-    "backHeader": "BACK & OUTILS"
-  },
   "projects": {
-    "number": "03",
-    "eyebrow": "// Projets",
-    "title": "Sélection",
-    "subtitle": "Un échantillon représentatif. Je détaille sur demande.",
-    "status": {
-      "live": "En ligne",
-      "wip": "En cours",
-      "offline": "Terminé"
-    },
+    "number": "01",
+    "title": "Travaux récents",
+    "subtitle": "Échantillon représentatif. Détails sur demande.",
     "cardOpen": "Ouvrir le projet",
+    "cta": "Voir le projet",
+    "previousCard": "Carte précédente",
     "modal": {
       "close": "Fermer",
       "visit": "Voir le projet",
@@ -67,17 +43,7 @@
       "supify": {
         "tagline": "Réseau social dédié à la musique, avec mini-jeux intégrés.",
         "description": "Supify est un réseau social centré sur la musique. Les utilisateurs partagent leurs découvertes, interagissent autour de morceaux, et accèdent à des mini-jeux musicaux en temps réel. Projet phare actuellement en développement.",
-        "role": "Solo maker"
-      },
-      "libreo": {
-        "tagline": "Application web de découverte littéraire au design éditorial & luxe.",
-        "description": "Libreo aide à explorer et découvrir des livres via une interface soignée, inspirée des magazines littéraires haut de gamme. Navigation typographique, mise en scène éditoriale.",
-        "role": "Solo maker"
-      },
-      "lsv-prono": {
-        "tagline": "Application web de suivi d'évolution pour les paris sportifs.",
-        "description": "LSV Prono permet de journaliser ses paris sportifs, visualiser son évolution dans le temps et analyser ses performances avec des graphiques dédiés.",
-        "role": "Solo maker"
+        "role": "Équipe"
       },
       "photographer-site": {
         "tagline": "Site galerie pour un photographe.",
@@ -97,20 +63,29 @@
     }
   },
   "contact": {
-    "number": "04",
-    "eyebrow": "// CONTACT",
-    "title": "On travaille ensemble ?",
-    "subtitle": "Un projet, une idée, une question. L'email, c'est le plus simple.",
-    "email": "sauveyleo@gmail.com",
-    "mailtoSubject": "Projet — via leosauvey.fr",
-    "copy": "Copier l'email",
-    "copied": "Copié ✓",
-    "socialGithub": "GitHub",
-    "socialLinkedin": "LinkedIn"
+    "title": "Une idée ? Parlons-en.",
+    "socialAriaGithub": "Voir mon GitHub",
+    "socialAriaLinkedin": "Voir mon LinkedIn",
+    "form": {
+      "srHeading": "Formulaire de contact",
+      "nameLabel": "Nom",
+      "namePlaceholder": "Votre nom",
+      "emailLabel": "Email",
+      "emailPlaceholder": "vous@email.com",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Parlez-moi de votre projet ou de votre idée…",
+      "submit": "Envoyer",
+      "submitting": "Envoi…",
+      "successMessage": "Message envoyé ✓",
+      "errorGeneric": "Erreur, réessayez.",
+      "errorRateLimit": "Trop de tentatives. Réessayez dans une heure.",
+      "errorMissingFields": "Tous les champs sont requis.",
+      "errorInvalidEmail": "Email invalide.",
+      "errorMessageTooShort": "Message trop court (10 caractères minimum)."
+    }
   },
   "footer": {
-    "rights": "© 2026 Léo Sauvey — Tous droits réservés.",
-    "mention": "Conçu et développé avec soin."
+    "copyright": "© 2026 Léo Sauvey"
   },
   "loader": {
     "name": "LÉO SAUVEY",

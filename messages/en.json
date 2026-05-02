@@ -6,55 +6,31 @@
   "nav": {
     "home": "Home",
     "projects": "Projects",
-    "about": "About",
     "contact": "Contact",
     "menuOpen": "Open menu",
     "menuClose": "Close menu"
   },
-  "theme": {
-    "toggleLight": "Switch to light mode",
-    "toggleDark": "Switch to dark mode"
+  "burger": {
+    "label": "Main menu",
+    "github": "GitHub",
+    "linkedin": "LinkedIn"
   },
   "locale": {
     "switchToFr": "Passer en français",
     "switchToEn": "Switch to English"
   },
   "hero": {
-    "eyebrow": "// PORTFOLIO 2026",
     "title": "LÉO SAUVEY",
-    "tagline": "Freelance developer. I design and deliver tailored websites, apps and software.",
-    "stat1": "01 / SUPINFO — YEAR 3",
-    "stat2": "02 / CAEN & CHERBOURG",
-    "stat3": "03 / REMOTE FRIENDLY",
+    "statement": "A representative sample. I'll detail on request.",
     "scroll": "Scroll"
   },
-  "about": {
-    "number": "01",
-    "eyebrow": "// About",
-    "title": "About",
-    "p1": "I'm 21, studying computer science at Supinfo (3rd year, RNCP degree expected in 2028). Based between Caen and Cherbourg, France, I work on-site or remote depending on what serves the project best.",
-    "p2": "I design and ship websites, mobile and web apps, and custom software. The goal is always the same: deliver a tool that solves a real problem, whether it saves time day-to-day or unlocks something concrete inside a company.",
-    "p3": "Detail-obsessed, good at picking up what a client doesn't say out loud, and as invested in the project as if it were my own. Outside of code, I'm really into sports and love good food and good company — it helps keep a cool head when a sprint goes sideways."
-  },
-  "stack": {
-    "number": "02",
-    "eyebrow": "// Stack",
-    "title": "Main stack",
-    "subtitle": "The tech I use day-to-day. I touch others, but these I really master.",
-    "frontHeader": "FRONT",
-    "backHeader": "BACK & TOOLS"
-  },
   "projects": {
-    "number": "03",
-    "eyebrow": "// Projects",
+    "number": "01",
     "title": "Selected work",
-    "subtitle": "A representative sample. Happy to walk through any of these in more depth.",
-    "status": {
-      "live": "Live",
-      "wip": "In progress",
-      "offline": "Completed"
-    },
+    "subtitle": "Representative sample. Details on request.",
     "cardOpen": "Open project",
+    "cta": "View project",
+    "previousCard": "Previous card",
     "modal": {
       "close": "Close",
       "visit": "Visit project",
@@ -67,17 +43,7 @@
       "supify": {
         "tagline": "Music-focused social network with integrated mini-games.",
         "description": "Supify is a music-centric social network. Users share discoveries, engage around tracks, and play integrated real-time music mini-games. Main ongoing project.",
-        "role": "Solo maker"
-      },
-      "libreo": {
-        "tagline": "Literary discovery web app with an editorial, premium design.",
-        "description": "Libreo helps users explore and discover books through a polished, premium-magazine-inspired interface. Typography-driven navigation, editorial layout.",
-        "role": "Solo maker"
-      },
-      "lsv-prono": {
-        "tagline": "Web app to track your betting evolution and performance.",
-        "description": "LSV Prono logs your sports bets, visualizes your evolution over time, and analyzes performance through dedicated charts.",
-        "role": "Solo maker"
+        "role": "Team"
       },
       "photographer-site": {
         "tagline": "Gallery website for a photographer.",
@@ -97,20 +63,29 @@
     }
   },
   "contact": {
-    "number": "04",
-    "eyebrow": "// CONTACT",
-    "title": "Let's work together?",
-    "subtitle": "A project, an idea, a question. Email is the simplest way.",
-    "email": "sauveyleo@gmail.com",
-    "mailtoSubject": "Project — via leosauvey.fr",
-    "copy": "Copy email",
-    "copied": "Copied ✓",
-    "socialGithub": "GitHub",
-    "socialLinkedin": "LinkedIn"
+    "title": "Got an idea? Let's talk.",
+    "socialAriaGithub": "View my GitHub",
+    "socialAriaLinkedin": "View my LinkedIn",
+    "form": {
+      "srHeading": "Contact form",
+      "nameLabel": "Name",
+      "namePlaceholder": "Your name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@email.com",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Tell me about your project or idea…",
+      "submit": "Send",
+      "submitting": "Sending…",
+      "successMessage": "Message sent ✓",
+      "errorGeneric": "Error, try again.",
+      "errorRateLimit": "Too many attempts. Try again in an hour.",
+      "errorMissingFields": "All fields are required.",
+      "errorInvalidEmail": "Invalid email.",
+      "errorMessageTooShort": "Message too short (minimum 10 characters)."
+    }
   },
   "footer": {
-    "rights": "© 2026 Léo Sauvey — All rights reserved.",
-    "mention": "Designed and crafted with care."
+    "copyright": "© 2026 Léo Sauvey"
   },
   "loader": {
     "name": "LÉO SAUVEY",

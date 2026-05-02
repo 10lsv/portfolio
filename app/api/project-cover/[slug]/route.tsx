@@ -1,40 +1,38 @@
 import { ImageResponse } from 'next/og';
 import { type NextRequest } from 'next/server';
 
-import { PROJECTS, type Project, type ProjectIcon } from '@/content/projects';
+import { PROJECTS, type ProjectIcon } from '@/content/projects';
 import { LUCIDE_PATHS, type LucidePath } from '@/lib/lucide-paths';
 
 // Runtime Edge explicite (exigence utilisateur). Permet le rendu instantané
 // via ImageResponse sans cold start Node.
 export const runtime = 'edge';
 
-// Dimensions cover. 1600×1000 = ratio 8:5, cohérent avec le plane 3D 4:3
-// stretch et l'aspect-[4/3] du ProjectCard 2D (les deux croppent proprement).
+// Dimensions cover : 1600×1000 = ratio 8:5, cohérent avec le plane 3D
+// (CARD_W/CARD_H) et l'aspect-[8/5] du ProjectCard 2D.
 const COVER_W = 1600;
 const COVER_H = 1000;
 
 // Cache 1 an immutable (contrat avec la query `?v=N` : on bump v quand on
-// change un accent/icône, jamais sur la même URL).
+// change la composition, jamais sur la même URL).
 const CACHE_HEADER = 'public, max-age=31536000, immutable, s-maxage=31536000';
 
-// Map des couleurs de badge statut (brief §6.7.2 + StatusBadge component).
-const STATUS_COLOR: Record<Project['status'], string> = {
-  live: '#3f9960', // --success
-  wip: '#B30000', // --accent-hi (plus lisible sur bg dégradé que --accent)
-  offline: '#6B6B6B', // --text-2
-};
+// V8.1 — composition cover (tags techs retirés).
+// - Top-left (sans logo) : icône Lucide filigrane subtle (signature)
+// - Centre (avec logo) : logo PNG redimensionné (320×320 vs 400 avant)
+// - Bottom : overlay gradient + titre + tagline (zone de lecture sombre)
+//
+// Pas de tag pills techs en haut-droite — retirés au sprint chirurgical
+// urgent (encombraient la composition).
 
-const STATUS_LABEL_FR: Record<Project['status'], string> = {
-  live: 'EN LIGNE',
-  wip: 'EN COURS',
-  offline: 'PROJET TERMINÉ',
-};
-
-// Slugs pour lesquels un logo PNG perso est disponible dans /public/projects/.
-// Le nom de fichier suit la convention <slug>-logo.png. Étendre cette liste
-// quand un nouveau projet a un logo dispo (le helper loadProjectLogo gère le
-// fallback silencieux si le PNG est absent).
-const SLUGS_WITH_LOGO: ReadonlySet<string> = new Set(['supify', 'nutriscan']);
+// Slugs avec logo PNG perso disponible dans /public/projects/<slug>-logo.png.
+// Étendre cette liste quand un nouveau logo est ajouté côté assets.
+const SLUGS_WITH_LOGO: ReadonlySet<string> = new Set([
+  'supify',
+  'nutriscan',
+  'mkagain777',
+  'photographer-site',
+]);
 
 // Fetch du TTF Clash Display Bold posé dans public/fonts/. ArrayBuffer passé
 // à ImageResponse pour le rendu des titres en Clash.
@@ -47,10 +45,8 @@ async function loadClashBold(req: NextRequest): Promise<ArrayBuffer> {
   return res.arrayBuffer();
 }
 
-// Fetch JetBrains Mono depuis le repo officiel (raw TTF stable). Le cover
-// n'utilise pas Inter en visible (tous les textes sont en Clash ou JB Mono),
-// donc on évite cette dep. Le repo rsms/inter a changé de structure et les
-// URLs `docs/font-files/*` renvoient 404 → option instable, écartée.
+// Fetch JetBrains Mono depuis le repo officiel. Utilisé pour la tagline +
+// les chips techs.
 async function loadJetBrainsMono(): Promise<ArrayBuffer> {
   const res = await fetch(
     'https://github.com/JetBrains/JetBrainsMono/raw/master/fonts/ttf/JetBrainsMono-Regular.ttf',
@@ -76,9 +72,7 @@ function arrayBufferToBase64(buf: ArrayBuffer): string {
   return btoa(binary);
 }
 
-// Fetch optionnel d'un logo perso pour un slug donné (asset local
-// public/projects/<slug>-logo.png). Renvoie null si absent — le rendu retombe
-// alors sur l'icône Lucide en filigrane (rendu typographique pur).
+// Fetch optionnel d'un logo perso (asset local public/projects/<slug>-logo.png).
 async function loadProjectLogo(
   slug: string,
   req: NextRequest,
@@ -94,8 +88,7 @@ async function loadProjectLogo(
   }
 }
 
-// Rend les paths Lucide en JSX <svg>. Les paths sont extraits dans
-// lib/lucide-paths.ts, cohérent avec la signature brief.
+// Rend les paths Lucide en JSX <svg>.
 function renderLucideIcon(iconName: ProjectIcon, size: number, color: string) {
   const icon: LucidePath = LUCIDE_PATHS[iconName];
   return (
@@ -120,10 +113,8 @@ function renderLucideIcon(iconName: ProjectIcon, size: number, color: string) {
   );
 }
 
-// Rendu cover minimaliste 404 — on renvoie une image plutôt qu'un HTTP 404
-// pour que crawlers/bots ne voient pas une cascade d'erreurs si le slug est
-// mal configuré (consigne utilisateur). Tout en JB Mono pour garder un seul
-// fetch de font en cas d'erreur.
+// Cover 404 minimaliste — image plutôt qu'un HTTP 404 pour que crawlers ne
+// voient pas de cascade d'erreurs si un slug est mal configuré.
 function render404(clashBold: ArrayBuffer, jetbrainsMono: ArrayBuffer) {
   return new ImageResponse(
     (
@@ -171,7 +162,6 @@ function render404(clashBold: ArrayBuffer, jetbrainsMono: ArrayBuffer) {
         { name: 'JetBrainsMono', data: jetbrainsMono, style: 'normal', weight: 400 },
       ],
       headers: {
-        // 404 cache court pour qu'une correction de slug soit visible rapidement.
         'Cache-Control': 'public, max-age=300, s-maxage=300',
       },
     },
@@ -187,10 +177,14 @@ export async function GET(
   const { slug } = await params;
   const project = PROJECTS.find((p) => p.id === slug);
 
-  // Load fonts en parallèle — pas d'await bloquant intermédiaire.
-  // Logo perso chargé seulement si le slug est dans SLUGS_WITH_LOGO, sinon
-  // ignoré (un fetch raté ne casse pas le rendu, mais inutile de payer le
-  // round-trip pour les projets sans logo perso).
+  // V8.7 : query `clean=1` skip le titre + overlay gradient de la PNG.
+  // Utilisé par ProjectModal qui affiche déjà le titre dans son panneau
+  // droit (évite duplication "her Site" cropped sur la cover modal).
+  // La galerie 3D + cards 2D fallback continuent de fetch la PNG sans
+  // le param → titre baké conservé pour la signature visuelle gallery.
+  const url = new URL(req.url);
+  const isClean = url.searchParams.get('clean') === '1';
+
   const [clashBold, jetbrainsMono, logo] = await Promise.all([
     loadClashBold(req),
     loadJetBrainsMono(),
@@ -203,9 +197,7 @@ export async function GET(
     return render404(clashBold, jetbrainsMono);
   }
 
-  const { accent, icon, title, status } = project;
-  // Si le PNG est absent (pas encore committé / 404), fallback silencieux
-  // sur le rendu typographique avec icône Lucide en filigrane.
+  const { accent, icon, title } = project;
   const isWithLogo = SLUGS_WITH_LOGO.has(slug) && logo !== null;
 
   return new ImageResponse(
@@ -221,125 +213,95 @@ export async function GET(
           overflow: 'hidden',
         }}
       >
-        {/* Icône filigrane bottom-right — sert de texture visuelle, pas d'info.
-            Translate partiel hors cadre pour un effet de "débord" discret.
-            Supprimée quand un logo perso est chargé (sinon doublon visuel
-            logo + icône Lucide). */}
+        {/* Filigrane icône Lucide top-left — projets sans logo PNG.
+            Position (96, 96), taille 280, opacity 0.12. Donne une
+            signature visuelle subtile sans concurrencer le titre. */}
         {!isWithLogo && (
           <div
             style={{
               position: 'absolute',
-              right: -40,
-              bottom: -60,
+              left: 96,
+              top: 96,
               display: 'flex',
               opacity: 1,
-              color: 'rgba(255,255,255,0.15)',
+              color: 'rgba(255,255,255,0.12)',
             }}
           >
-            {renderLucideIcon(icon, 520, 'rgba(255,255,255,0.15)')}
+            {renderLucideIcon(icon, 280, 'rgba(255,255,255,0.12)')}
           </div>
         )}
 
-        {/* Logo perso (Supify, Nutriscan, …) — uniquement quand le PNG est dispo.
-            400×400, padding-left 96, top:300 (centre vertical = 500). */}
+        {/* Logo perso — V8.5 : centrage parfait au milieu de la cover
+            (top = (1000 - 480) / 2 = 260). La cover est croppée portrait
+            par object-cover dans le modal (zone visible verticale), donc
+            le logo doit être au centre du PNG pour rester centré dans le
+            modal aussi. */}
         {isWithLogo && (
           <div
             style={{
               position: 'absolute',
-              left: 96,
-              top: 300,
-              width: 400,
-              height: 400,
+              left: (COVER_W - 480) / 2,
+              top: (COVER_H - 480) / 2,
+              width: 480,
+              height: 480,
               display: 'flex',
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={logo as string}
-              width={400}
-              height={400}
-              alt=""
-            />
+            <img src={logo as string} width={480} height={480} alt="" />
           </div>
         )}
 
-        {/* Badge statut top-right */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 56,
-            right: 96,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            fontFamily: 'JetBrainsMono',
-            fontSize: 16,
-            letterSpacing: 2,
-            color: STATUS_COLOR[status],
-            textTransform: 'uppercase',
-          }}
-        >
+        {/* Overlay gradient bas (skip si clean=1 — pas de titre à
+            assombrir). Hauteur 500px = 50% de la cover, transparent →
+            noir 0.45 pour lisibilité du titre blanc sur fonds clairs. */}
+        {!isClean && (
           <div
             style={{
-              width: 10,
-              height: 10,
-              borderRadius: 5,
-              background: STATUS_COLOR[status],
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 500,
+              display: 'flex',
+              background:
+                'linear-gradient(to top, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 100%)',
             }}
           />
-          {STATUS_LABEL_FR[status]}
-        </div>
+        )}
 
-        {/* Titre top-left — Clash Display Bold 160px, tracking serré.
-            Pour les covers avec logo : on shifte à left = 96 + 400 + 64 = 560
-            pour ne pas overlap le logo, et on aligne verticalement le bloc
-            (titre 160 + gap 28 + tagline ~36 ≈ 224) sur le centre du logo
-            (Y=500) → top ≈ 390. Pour les covers sans logo : top:96 conservé,
-            ancrage haut comme les 4 autres covers. */}
-        <div
-          style={{
-            position: 'absolute',
-            top: isWithLogo ? 390 : 96,
-            left: isWithLogo ? 560 : 96,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 28,
-            maxWidth: COVER_W - (isWithLogo ? 656 : 192),
-          }}
-        >
+        {/* Titre bottom-left (skip si clean=1). Clash Display Bold 80px
+            (64px si > 14 chars pour rester monoligne), text-shadow pour
+            lisibilité même sans gradient parfait. Le modal demande
+            ?clean=1 → cette zone reste vide → le titre n'apparait que
+            dans le panneau droit du modal. Galerie 3D + cards 2D
+            (sans clean) gardent le titre baké comme signature visuelle. */}
+        {!isClean && (
           <div
             style={{
-              fontFamily: 'ClashDisplay',
-              fontWeight: 700,
-              // Fit-to-line : 160px par défaut, 128px au-delà de 12 chars.
-              // Satori gère mal le flex-column gap après un titre multi-lignes
-              // (la tagline passe sous la 2e ligne et chevauche), donc on
-              // force un rendu monoligne en scalant le font-size.
-              fontSize: title.length > 12 ? 128 : 160,
-              lineHeight: 0.95,
-              letterSpacing: -3,
-              color: '#FFFFFF',
-              whiteSpace: 'nowrap',
+              position: 'absolute',
+              left: 96,
+              bottom: 96,
+              display: 'flex',
+              maxWidth: COVER_W - 192,
             }}
           >
-            {title}
+            <div
+              style={{
+                fontFamily: 'ClashDisplay',
+                fontWeight: 700,
+                fontSize: title.length > 14 ? 64 : 80,
+                lineHeight: 1,
+                letterSpacing: -2,
+                color: '#FFFFFF',
+                whiteSpace: 'nowrap',
+                textShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              }}
+            >
+              {title}
+            </div>
           </div>
-          <div
-            style={{
-              fontFamily: 'JetBrainsMono',
-              fontSize: 28,
-              lineHeight: 1.4,
-              color: 'rgba(255,255,255,0.75)',
-              maxWidth: 1000,
-            }}
-          >
-            {/* Tagline figée ici pour éviter un round-trip i18n en Edge.
-                On prend la version FR du brief §7 — l'OG / cover reste
-                dans la langue de dépôt, cohérent Vercel/Linear. */}
-            {TAGLINES_FR[slug] ?? ''}
-          </div>
-        </div>
-
+        )}
       </div>
     ),
     {
@@ -361,16 +323,8 @@ export async function GET(
   );
 }
 
-// Taglines figées au cover generator. Sources = brief §7 (FR officielles).
-// On ne passe PAS par next-intl côté Edge pour deux raisons :
-//  1. Pas de dépendance i18n runtime sur une route asset (simplicité + perf)
-//  2. Une OG/cover reste conventionnellement dans la langue du domaine
-const TAGLINES_FR: Record<string, string> = {
-  supify: 'Réseau social dédié à la musique, avec mini-jeux intégrés.',
-  libreo: 'Application web de découverte littéraire au design éditorial & luxe.',
-  'lsv-prono': "Application web de suivi d'évolution pour les paris sportifs.",
-  'photographer-site': 'Site galerie pour un photographe.',
-  mkagain777: 'Site e-commerce pour un beatmaker.',
-  nutriscan:
-    'Application mobile : photographie ton plat, obtiens toutes les infos nutritionnelles pour suivre ton régime.',
-};
+// V8.5 : TAGLINES_FR retiré — la tagline ne figure plus dans le PNG cover
+// (duplication avec le panneau droit du modal qui l'affiche déjà en Inter).
+// Le PNG ne contient plus que titre + logo (ou icône Lucide pour les
+// projets sans logo).
+

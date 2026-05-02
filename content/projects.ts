@@ -35,9 +35,8 @@ export type Project = {
 
 // Ordre du tableau = ordre d'affichage galerie 2D + ordre de placement sur la
 // spirale 3D (index 0 = position avant / featured, index N = la plus profonde).
-// Écart brief §7 : 6 projets (le brief verrouille 5 cards calibrées pour la
-// spirale 3D Sprint 4). Spirale étendue à 6 positions dans GalleryScene.tsx,
-// CAMERA_END_Z bumped en conséquence.
+// V8.3 : 4 projets (lsv-prono + libreo retirés). Spirale 3D ajustée à 4
+// positions dans GalleryScene.tsx, CAMERA_END_Z réduit en conséquence.
 export const PROJECTS: readonly Project[] = [
   {
     id: 'supify',
@@ -48,18 +47,21 @@ export const PROJECTS: readonly Project[] = [
     url: 'https://supify.fr',
     github: 'https://github.com/10lsv',
     featured: true,
-    coverSrc: '/api/project-cover/supify?v=4',
+    coverSrc: '/api/project-cover/supify?v=11',
     accent: { from: '#A855F7', to: '#EC4899' },
     icon: 'Music',
   },
-  // Repo privé volontairement → ni `url` ni `github`.
+  // V8.5 : github fallback vers le profil général (le repo Nutriscan reste
+  // privé mais le bouton "Code source" du modal pointe vers la liste
+  // publique des repos de Léo — UX cohérente sur les 4 projets).
   {
     id: 'nutriscan',
     title: 'Nutriscan',
     year: '2025',
     stack: ['React Native', 'Node.js'],
     status: 'offline',
-    coverSrc: '/api/project-cover/nutriscan?v=2',
+    github: 'https://github.com/10lsv',
+    coverSrc: '/api/project-cover/nutriscan?v=9',
     accent: { from: '#22C55E', to: '#16A34A' },
     icon: 'Leaf',
   },
@@ -69,8 +71,9 @@ export const PROJECTS: readonly Project[] = [
     year: '2026',
     stack: ['Next.js', 'TypeScript', 'React', 'Tailwind'],
     status: 'wip',
+    url: 'https://mkagain-777.vercel.app/',
     github: 'https://github.com/10lsv',
-    coverSrc: '/api/project-cover/mkagain777?v=2',
+    coverSrc: '/api/project-cover/mkagain777?v=10',
     accent: { from: '#8B0000', to: '#0A0A0A' },
     icon: 'Disc3',
   },
@@ -82,30 +85,8 @@ export const PROJECTS: readonly Project[] = [
     status: 'live',
     url: 'https://v0-photographe-website-three.vercel.app',
     github: 'https://github.com/10lsv/PHOTOGRAPHER-SITE',
-    coverSrc: '/api/project-cover/photographer-site?v=2',
+    coverSrc: '/api/project-cover/photographer-site?v=10',
     accent: { from: '#27272A', to: '#0A0A0A' },
     icon: 'Camera',
-  },
-  {
-    id: 'lsv-prono',
-    title: 'LSV Prono',
-    year: '2025',
-    stack: ['TypeScript', 'React', 'Next.js'],
-    status: 'live',
-    github: 'https://github.com/10lsv/LSV-PRONO',
-    coverSrc: '/api/project-cover/lsv-prono?v=2',
-    accent: { from: '#10B981', to: '#3B82F6' },
-    icon: 'TrendingUp',
-  },
-  {
-    id: 'libreo',
-    title: 'Libreo',
-    year: '2025',
-    stack: ['TypeScript', 'React', 'Next.js', 'Tailwind'],
-    status: 'live',
-    github: 'https://github.com/10lsv/LIBREO',
-    coverSrc: '/api/project-cover/libreo?v=2',
-    accent: { from: '#F59E0B', to: '#EAB308' },
-    icon: 'BookOpen',
   },
 ];

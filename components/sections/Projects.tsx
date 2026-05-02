@@ -3,12 +3,14 @@
 import { useTranslations } from 'next-intl';
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
 
+import { ProjectGalleryMobile } from '@/components/sections/ProjectGalleryMobile';
 import { Gallery2DGrid } from '@/components/ui/Gallery2DGrid';
 import { ProjectModal, type ModalOrigin } from '@/components/ui/ProjectModal';
 import { SectionNumber } from '@/components/ui/SectionNumber';
-import { REVEAL_SCROLL_TRIGGER, gsap } from '@/lib/animations';
+import { gsap } from '@/lib/animations';
 import { cn } from '@/lib/cn';
-import { PROJECTS, type ProjectStatus } from '@/content/projects';
+import { revealBlock, revealMask, revealWords } from '@/lib/reveals';
+import { PROJECTS } from '@/content/projects';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 import { useWebGLSupport } from '@/lib/useWebGLSupport';
@@ -22,12 +24,6 @@ const GalleryScene = lazy(() =>
     default: m.GalleryScene,
   })),
 );
-
-const STATUS_KEY_MAP: Record<ProjectStatus, 'live' | 'wip' | 'offline'> = {
-  live: 'live',
-  wip: 'wip',
-  offline: 'offline',
-};
 
 export function Projects() {
   const t = useTranslations('projects');
@@ -45,7 +41,18 @@ export function Projects() {
     setMounted(true);
   }, []);
 
-  const use3D = mounted && isDesktop && hasWebGL && !reducedMotion;
+  // V8.6 sprint mobile : 3 paths distincts.
+  //   - Desktop (≥ 1024px) avec WebGL + !RM : galerie 3D R3F scroll-driven
+  //   - Mobile (< 1024px) : ProjectGalleryMobile — colonne verticale 4 cards
+  //     85vh chacune, animations scroll-driven Framer Motion (translateY,
+  //     scale, opacity, rotateX, parallax cover). Remplace le carousel
+  //     précédent (peu impactant). Reduced-motion géré INTERNE au composant
+  //     (grid statique fade-in CSS), donc pas besoin de gate ici.
+  //   - Reduced-motion sur DESKTOP OU WebGL absent : Gallery2DGrid (fallback
+  //     statique). En mobile, ProjectGalleryMobile gère lui-même reduced-motion.
+  const showGallery3D = mounted && isDesktop && hasWebGL && !reducedMotion;
+  const showGalleryMobile = mounted && !isDesktop;
+  const showGallery2DFallback = mounted && isDesktop && (reducedMotion || !hasWebGL);
 
   const activeProject = PROJECTS.find((p) => p.id === activeId) ?? null;
   const activeLabels = activeProject
@@ -56,7 +63,6 @@ export function Projects() {
         stackLabel: t('modal.stackLabel'),
         yearLabel: t('modal.yearLabel'),
         roleLabel: t('modal.roleLabel'),
-        statusLabel: t(`status.${STATUS_KEY_MAP[activeProject.status]}`),
         tagline: t(`items.${activeProject.id}.tagline`),
         description: t(`items.${activeProject.id}.description`),
         role: t(`items.${activeProject.id}.role`),
@@ -83,41 +89,34 @@ export function Projects() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      if (reducedMotion) {
-        gsap.set('[data-projects-reveal]', { opacity: 1, y: 0 });
-        gsap.set('[data-projects-card]', { opacity: 1, y: 0 });
-        return;
-      }
-
-      gsap.from('[data-projects-reveal]', {
-        opacity: 0,
-        y: 32,
-        duration: 0.8,
-        stagger: 0.12,
-        ease: 'expo.out',
-        scrollTrigger: {
-          trigger: rootRef.current,
-          ...REVEAL_SCROLL_TRIGGER,
-        },
+      // V7 sprint chirurgical : eyebrow "// Projects" retiré, plus de
+      // tween eyebrow correspondant.
+      revealMask({
+        reducedMotion,
+        target: '[data-reveal-mask]',
+        root: rootRef.current,
+        trigger: rootRef.current,
       });
 
-      if (!use3D) {
-        gsap.from('[data-projects-card]', {
-          opacity: 0,
-          y: 32,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: 'expo.out',
-          scrollTrigger: {
-            trigger: '[data-projects-grid]',
-            ...REVEAL_SCROLL_TRIGGER,
-          },
+      revealWords({
+        reducedMotion,
+        target: '[data-reveal-words]',
+        root: rootRef.current,
+        trigger: rootRef.current,
+      });
+
+      if (showGallery2DFallback) {
+        revealBlock({
+          reducedMotion,
+          target: '[data-projects-card]',
+          root: rootRef.current,
+          trigger: document.querySelector('[data-projects-grid]'),
         });
       }
     }, rootRef);
 
     return () => ctx.revert();
-  }, [reducedMotion, use3D]);
+  }, [reducedMotion, showGallery2DFallback]);
 
   return (
     <section
@@ -132,36 +131,65 @@ export function Projects() {
 
           <div className="flex-1">
             <div className="mb-12 flex max-w-3xl flex-col gap-4 md:mb-16">
-              <p data-projects-reveal className="caption text-accent">
-                {t('eyebrow')}
-              </p>
-              <h2
-                id="projects-title"
-                data-projects-reveal
-                className={cn(
-                  'font-display font-semibold leading-[1.15]',
-                  'text-h1 md:text-display-m',
-                )}
+              {/* Wrapper mask reveal : revealMask force overflow-hidden au
+                  runtime + anime l'inner h2 yPercent 100 → 0. V7 sprint
+                  chirurgical : eyebrow "// Projects" retiré au-dessus. */}
+              <div data-reveal-mask>
+                <h2
+                  id="projects-title"
+                  className={cn(
+                    'font-display font-semibold leading-[1.15]',
+                    // Sprint mobile : text-3xl (30px) sur mobile pour
+                    // que "Travaux récents" / "Selected work" tienne
+                    // sur 1 ligne sur iPhone 14 Pro 393px. Desktop
+                    // INCHANGÉ (md:text-display-m = 56px).
+                    'text-3xl md:text-display-m',
+                  )}
+                >
+                  {t('title')}
+                </h2>
+              </div>
+              {/* Sprint mobile galerie : calibration finale du subtitle
+                  pour tenir sur 1 ligne sur iPhone 14 Pro (393px - 48px
+                  padding = 345px utiles). Le FR "Échantillon
+                  représentatif. Détails sur demande." (47 chars) overflow
+                  à text-sm (14px → ~350px) → on descend à text-xs (12px
+                  → ~290px) qui passe confortablement. EN aligné en
+                  parité ("Representative sample. Details on request.").
+                  Desktop INCHANGÉ (md:text-body-l = 18px). */}
+              <p
+                data-reveal-words
+                className="text-xs text-text-1 md:text-body-l"
               >
-                {t('title')}
-              </h2>
-              <p data-projects-reveal className="text-body-l text-text-1">
                 {t('subtitle')}
               </p>
             </div>
 
-            {/* Mode 2D : galerie grid inline dans flex-1. Utilisée mobile,
-                WebGL off, reduced-motion, et en attendant mount client. */}
-            {!use3D && <Gallery2DGrid onOpen={handleOpen2D} />}
+            {/* Path 1 : Mobile gallery — colonne verticale 4 cards 85vh,
+                animations scroll-driven Framer Motion (translateY/scale/
+                opacity/rotateX + parallax cover). Reduced-motion géré
+                INTERNE (grid statique fade-in CSS). */}
+            {showGalleryMobile && (
+              <ProjectGalleryMobile
+                projects={PROJECTS}
+                onOpen={handleOpen2D}
+              />
+            )}
+
+            {/* Path 2 : Gallery 2D fallback — desktop reduced-motion ou
+                WebGL absent. Mobile a son propre fallback dans le
+                composant ProjectGalleryMobile. */}
+            {showGallery2DFallback && <Gallery2DGrid onOpen={handleOpen2D} />}
           </div>
         </div>
       </div>
 
-      {/* Mode 3D : plage de scroll 400vh hors container pour canvas plein
-          viewport (brief §6.7.1 "scène minimaliste fond bg-0"). Le Suspense
-          catch la promesse du chunk R3F et affiche la galerie 2D en fallback
-          pendant parse/init — continuité visuelle avec le mode 2D. */}
-      {use3D && (
+      {/* Path 3 : Galerie 3D R3F desktop — 400vh sticky pour scroll-
+          driven camera (brief §6.7.1 "scène minimaliste fond bg-0").
+          DESKTOP UNIQUEMENT (revert mobile sprint Option C). Le Suspense
+          catch la promesse du chunk R3F et affiche la galerie 2D en
+          fallback pendant parse/init. */}
+      {showGallery3D && (
         <div
           ref={scrollRangeRef}
           className="relative h-[400vh] mt-8 md:mt-16 -mx-6 md:-mx-16"

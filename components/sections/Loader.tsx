@@ -7,23 +7,17 @@ import { gsap } from '@/lib/animations';
 import { cn } from '@/lib/cn';
 import { useIntro } from '@/lib/IntroContext';
 
-// Loader d'intro (brief §6.1). Timeline GSAP :
-//  - 0..800ms    : underline rouge se trace G→D + compteur 00→100 en parallèle
-//  - 800..1100ms : hold bref, laisse le texte respirer
-//  - 1100..1500ms: exit — nom slide+scale+fade vers le coin top-left (= position
-//    du logo LSV header), bg fade to transparent
-//  - onComplete  : markDone() → Hero démarre son entrée
+// Loader d'intro (brief §6.1) — sprint boost agressif :
+//  - underline tracé : scaleX 0 → 1 + glow box-shadow 0 → 0 0 20px accent
+//    en parallèle, retombe à 0 à la fin du tracé
+//  - compteur 00 → 100 : glitch translateX ±2px tous les 25 unités
+//  - exit "split" : 2 layers bg-bg-0 (top half + bottom half), top slide
+//    up -100%, bottom slide down +100% — révèle Hero + Header derrière.
 //
-// Skip au clic / Escape / Enter : accélère le timeline (timeScale 2) et seek
-// à la phase d'exit. Compressed exit ≈ 400ms vs 800ms normal, pas de coupure
-// brutale (exigence utilisateur).
+// reduced-motion : court-circuit complet, le Loader n'est pas rendu (gating
+// dans IntroProvider/IntroMount).
 //
-// reduced-motion : court-circuit complet, introDone passe true immédiatement
-// via IntroProvider (le Loader n'est même pas rendu).
-//
-// z-index doc : **z-[100]** — couvre toute la z-stack actuelle (header z-50,
-// burger z-40, modal projet z-50). Si un toast / overlay futur doit coexister
-// avec le loader, coordonner ici avec priorité claire.
+// z-index doc : **z-[100]** — couvre toute la z-stack actuelle.
 export function Loader() {
   const t = useTranslations('loader');
   const { markDone } = useIntro();
@@ -31,34 +25,58 @@ export function Loader() {
   const nameRef = useRef<HTMLSpanElement>(null);
   const underlineRef = useRef<HTMLSpanElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
+  const splitTopRef = useRef<HTMLDivElement>(null);
+  const splitBottomRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const [skipped, setSkipped] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // États initiaux — parser GSAP en direct, pas de CSS anti-FOUC (le
-      // Loader n'existe que le temps de son jeu).
-      gsap.set(underlineRef.current, { scaleX: 0, transformOrigin: 'left center' });
+      gsap.set(underlineRef.current, {
+        scaleX: 0,
+        transformOrigin: 'left center',
+        boxShadow: '0 0 0px rgba(139,0,0,0)',
+      });
       gsap.set(nameRef.current, { opacity: 1, y: 0, scale: 1 });
-      gsap.set(rootRef.current, { opacity: 1 });
+      gsap.set([splitTopRef.current, splitBottomRef.current], { y: 0 });
 
       const counter = { value: 0 };
+      let lastGlitchBoundary = 0;
 
       const tl = gsap.timeline({
         defaults: { ease: 'power2.out' },
         onComplete: markDone,
       });
 
-      // Trace underline (800ms, ease-out-smooth — brief token. GSAP n'accepte
-      // pas les strings cubic-bezier sans CustomEase plugin ; `power4.out` est
-      // l'équivalent nommé le plus proche de cubic-bezier(0.22,1,0.36,1)).
+      // Trace underline (800ms) + glow box-shadow synchronisé : pulse 0
+      // → 20px → 0 sur la même durée que le tracé. Le pic au milieu donne
+      // l'impression que le trait "s'allume" pendant qu'il s'écrit.
       tl.to(
         underlineRef.current,
         { scaleX: 1, duration: 0.8, ease: 'power4.out' },
         0,
       );
+      tl.to(
+        underlineRef.current,
+        {
+          boxShadow: '0 0 20px rgba(139,0,0,0.8)',
+          duration: 0.4,
+          ease: 'power2.out',
+        },
+        0,
+      );
+      tl.to(
+        underlineRef.current,
+        {
+          boxShadow: '0 0 0px rgba(139,0,0,0)',
+          duration: 0.4,
+          ease: 'power2.in',
+        },
+        0.4,
+      );
 
-      // Compteur 00 → 100 en parallèle, même durée.
+      // Compteur 00 → 100 en parallèle, même durée. Glitch translateX
+      // ±2px déclenché à chaque passage de boundary 25/50/75.
       tl.to(
         counter,
         {
@@ -66,8 +84,29 @@ export function Loader() {
           duration: 0.8,
           ease: 'power1.out',
           onUpdate: () => {
-            if (counterRef.current) {
-              counterRef.current.textContent = String(Math.round(counter.value)).padStart(2, '0');
+            if (!counterRef.current) return;
+            const rounded = Math.round(counter.value);
+            counterRef.current.textContent = String(rounded).padStart(2, '0');
+            const nextBoundary = lastGlitchBoundary + 25;
+            if (rounded >= nextBoundary && nextBoundary <= 100) {
+              lastGlitchBoundary = nextBoundary;
+              gsap
+                .timeline()
+                .to(counterRef.current, {
+                  x: -2,
+                  duration: 0.05,
+                  ease: 'none',
+                })
+                .to(counterRef.current, {
+                  x: 2,
+                  duration: 0.05,
+                  ease: 'none',
+                })
+                .to(counterRef.current, {
+                  x: 0,
+                  duration: 0.05,
+                  ease: 'none',
+                });
             }
           },
         },
@@ -76,13 +115,9 @@ export function Loader() {
 
       // Hold bref.
       tl.to({}, { duration: 0.3 }, '>');
-
-      // Exit label pour le skip : timeScale 2 → seek('exit') compresse à 400ms.
       tl.addLabel('exit');
 
-      // Nom slide + scale-down + fade vers le coin top-left (approx. logo LSV).
-      // `expo.out` = équivalent GSAP de cubic-bezier(0.16,1,0.3,1) — brief
-      // token ease-expo-out.
+      // Nom slide + scale-down + fade vers le coin top-left (logo LSV).
       tl.to(
         nameRef.current,
         {
@@ -104,10 +139,17 @@ export function Loader() {
         'exit',
       );
 
-      // Fond fade to transparent, révèle le header + hero en dessous.
+      // Sprint boost : exit split au lieu de fade simple. Top layer slide
+      // up -100%, bottom layer slide down +100% sur 700ms ease expo.out.
+      // L'effet "rideau qui se sépare" révèle Hero + Header derrière.
       tl.to(
-        rootRef.current,
-        { opacity: 0, duration: 0.6, ease: 'power2.inOut' },
+        splitTopRef.current,
+        { y: '-100%', duration: 0.7, ease: 'expo.out' },
+        'exit+=0.2',
+      );
+      tl.to(
+        splitBottomRef.current,
+        { y: '100%', duration: 0.7, ease: 'expo.out' },
         'exit+=0.2',
       );
 
@@ -117,23 +159,18 @@ export function Loader() {
     return () => ctx.revert();
   }, [markDone]);
 
-  // Skip : accélère le timeline et saute à la phase exit. Si déjà skippé,
-  // no-op (évite double call markDone via re-clicks rapides).
   const handleSkip = () => {
     if (skipped) return;
     setSkipped(true);
     const tl = tlRef.current;
     if (!tl) return;
     tl.timeScale(2);
-    // Si on est avant 'exit', seek direct. Sinon laisse finir naturellement
-    // (déjà dans la phase exit, on ne peut qu'accélérer).
     const exitTime = tl.labels['exit'];
     if (typeof exitTime === 'number' && tl.time() < exitTime) {
       tl.seek('exit');
     }
   };
 
-  // Skip clavier (Escape + Enter) pour l'accessibilité.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Enter') handleSkip();
@@ -151,36 +188,52 @@ export function Loader() {
       tabIndex={0}
       aria-label={t('skipLabel')}
       className={cn(
-        // z-[100] : au-dessus de header/burger/modals. Voir commentaire doc fichier.
-        'fixed inset-0 z-[100] flex items-center justify-center',
-        'bg-bg-0 cursor-pointer select-none',
+        // z-[100] : au-dessus de header/burger/modals. Background appliqué
+        // via les 2 split layers, pas sur le root (sinon ils ne pourraient
+        // pas révéler ce qui est dessous au split exit).
+        'fixed inset-0 z-[100] cursor-pointer select-none',
       )}
     >
-      {/* Nom centre écran */}
-      <div className="relative flex flex-col items-center">
-        <span
-          ref={nameRef}
-          className={cn(
-            'font-display font-semibold text-text-0 leading-none',
-            'text-display-l md:text-display-l',
-          )}
-        >
-          {t('name')}
-        </span>
-        {/* Underline rouge qui se trace G→D. scaleX animé, origin left. */}
-        <span
-          ref={underlineRef}
-          aria-hidden
-          className="mt-4 block h-[2px] w-full bg-accent"
-        />
+      {/* Split layer haut : couvre la moitié supérieure, slide vers le haut
+          au exit pour révéler Header/Hero. */}
+      <div
+        ref={splitTopRef}
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-1/2 bg-bg-0"
+      />
+      {/* Split layer bas : couvre la moitié inférieure, slide vers le bas. */}
+      <div
+        ref={splitBottomRef}
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 h-1/2 bg-bg-0"
+      />
+
+      {/* Content (name + underline + counter) au-dessus des 2 layers via
+          z-index. Le content fade au exit pendant que les layers slidaient. */}
+      <div className="relative z-10 flex h-full items-center justify-center">
+        <div className="flex flex-col items-center">
+          <span
+            ref={nameRef}
+            className={cn(
+              'font-display font-semibold text-text-0 leading-none',
+              'text-display-l md:text-display-l',
+            )}
+          >
+            {t('name')}
+          </span>
+          <span
+            ref={underlineRef}
+            aria-hidden
+            className="mt-4 block h-[2px] w-full bg-accent"
+          />
+        </div>
       </div>
 
-      {/* Compteur mono bottom-left (brief §6.1). */}
       <span
         ref={counterRef}
         aria-hidden
         className={cn(
-          'absolute bottom-6 left-6 md:bottom-10 md:left-16',
+          'absolute bottom-6 left-6 z-10 md:bottom-10 md:left-16',
           'font-mono text-caption text-text-1 tracking-[0.15em]',
         )}
       >
