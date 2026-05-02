@@ -21,7 +21,9 @@
   },
   "hero": {
     "title": "LÉO SAUVEY",
+    "titleMobile": "LSV",
     "statement": "A representative sample. I'll detail on request.",
+    "taglineMobile": "tailor-made developer.",
     "scroll": "Scroll"
   },
   "projects": {

@@ -21,7 +21,9 @@
   },
   "hero": {
     "title": "LÉO SAUVEY",
+    "titleMobile": "LSV",
     "statement": "Développeur freelance. Solutions sur mesure, livraison rapide.",
+    "taglineMobile": "développeur sur mesure.",
     "scroll": "Défiler"
   },
   "projects": {

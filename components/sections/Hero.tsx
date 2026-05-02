@@ -147,40 +147,41 @@ export function Hero() {
             // 2px --accent (#8b0000). Mobile rétrograde à 1.5px (cf.
             // globals.css @media max-width 767).
             'hero-title-outline',
-            // Sizes mobile v3 : clamp(3.5rem, 14vw, 4.5rem) = 56-72px
-            // (vs 64-88 précédent). Sur iPhone 14 Pro 393px : 56px →
-            // SAUVEY ≈ 213px → marge >65px de chaque côté (cible >24px
-            // largement dépassée). Sur tablets juste avant md (~768px)
-            // : 72px. md:text-[120px] lg:text-[160px] INCHANGÉS.
-            'text-[clamp(3.5rem,14vw,4.5rem)] md:text-[120px] lg:text-[160px]',
-            // Letter-spacing 0 baseline, breathe oscille jusqu'à +0.04em
-            // (cf. globals.css).
+            // Mobile : LSV monogramme, 3 lettres → ~32vw pour remplir le
+            // viewport façon statement bold. Desktop INCHANGÉ.
+            'text-[clamp(7.5rem,32vw,11rem)] md:text-[120px] lg:text-[160px]',
+            // Letter-spacing 0 baseline, breathe oscille jusqu'à +0.04em.
             'tracking-normal',
-            // Animation breathe seule (sprint chirurgical : flash + stroke-
-            // react retirés).
             'animate-hero-letter-breathe',
           )}
         >
+          {/* Mobile visual : LSV. aria-hidden sur le span visuel + sr-only
+              pour que les lecteurs d'écran annoncent "Léo Sauvey" malgré
+              le monogramme affiché. */}
+          <span className="block md:hidden" aria-hidden="true">
+            <span className="block overflow-hidden pt-[0.15em] align-bottom">
+              <span
+                data-hero-word
+                className="inline-block pb-[0.08em] will-change-transform"
+              >
+                {t('titleMobile')}
+              </span>
+            </span>
+          </span>
+          <span className="sr-only md:hidden">{t('title')}</span>
+
+          {/* Desktop visual : LÉO SAUVEY mot-par-mot avec mask reveal GSAP. */}
           {titleWords.map((word, i) => (
             <span
               key={`${word}-${i}`}
               /* overflow-hidden = mask reveal pour le slide GSAP (yPercent
                  100 → 0). pt-[0.15em] donne du headroom au-dessus de la
                  cap-height pour que l'accent du É ne soit pas clipped au
-                 top du wrapper. Pas de leading-none ici : on hérite du
-                 leading-[1.1] du H1 pour préserver la même room.
-                 mr-[0.18em] uniquement entre les mots (skip last) :
-                 un trailing margin sur le dernier mot décalerait le
-                 strip inline et casserait le centrage text-align: center
-                 (LÉO et SAUVEY ne seraient plus équidistants du centre).
-                 0.18em (vs 0.12em avant) donne plus d'air entre les mots
-                 pour Archivo Black qui est plus large qu'Anton. */
+                 top du wrapper. mr-[0.18em] uniquement entre les mots
+                 (skip last) — un trailing margin sur le dernier mot
+                 décalerait le strip inline et casserait le centrage. */
               className={cn(
-                // Sprint mobile v2 : block sur mobile force LEO et
-                // SAUVEY sur des lignes séparées (vibe statement bold,
-                // chaque mot a sa ligne). Desktop garde inline-block →
-                // mots côte à côte avec mr-[0.18em] — INCHANGÉ.
-                'block overflow-hidden pt-[0.15em] align-bottom md:inline-block',
+                'hidden overflow-hidden pt-[0.15em] align-bottom md:inline-block',
                 i < titleWords.length - 1 && 'mr-[0.18em]',
               )}
             >
@@ -194,13 +195,17 @@ export function Hero() {
           ))}
         </h1>
 
-        {/* Statement éditorial — Inter regular, --text-2, centré sous le H1.
-            Spacing inchangé (mt-4 md:mt-6) — cohérent avec le H1 V3 en
-            Archivo Black outline. */}
-        {/* Tagline cachée mobile (hidden md:block) — sur mobile le hero
-            se concentre sur LEO + SAUVEY, plus aéré, focus pur sur le
-            statement bold. Desktop INCHANGÉ : tagline visible en
-            text-body-l Inter regular. */}
+        {/* Tagline mobile — petite, sous LSV, vibe signature. */}
+        <div className="mx-auto mt-3 max-w-md overflow-hidden md:hidden">
+          <p
+            data-hero-statement
+            className="font-sans text-body font-normal text-text-2 will-change-transform"
+          >
+            {t('taglineMobile')}
+          </p>
+        </div>
+
+        {/* Statement desktop — Inter regular, --text-2, centré sous le H1. */}
         <div className="mx-auto mt-4 hidden max-w-2xl overflow-hidden md:mt-6 md:block">
           <p
             data-hero-statement
